@@ -2,7 +2,7 @@ import networkit
 from networkit import *
 import matplotlib.pyplot as plt
 import numpy as np
-import networkit_based.networkit_util
+import network_scanner.networkit_based.networkit_util as networkit_util
 
 
 """
@@ -33,7 +33,7 @@ def plot_degree_dist(net, label, outpath):
     :return: unique degree list
     
     """
-    unique_deg, unique_cnt = networkit_based.networkit_util.get_deg_dist(net, label, outpath, degree_type='all')
+    unique_deg, unique_cnt = networkit_util.get_and_write_deg_dist(net, label, outpath, degree_type='all')
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.loglog(unique_deg, unique_cnt, 'b*', label=label)
@@ -58,7 +58,7 @@ def plot_indeg_dist(net, label, outpath):
     :return: unique in-degree list
     
     """
-    unique_deg, unique_cnt = networkit_based.networkit_util.get_deg_dist(net, label, outpath, degree_type='in')
+    unique_deg, unique_cnt = networkit_util.get_and_write_deg_dist(net, label, outpath, degree_type='in')
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.loglog(unique_deg, unique_cnt, 'g*', label=label)
@@ -83,7 +83,7 @@ def plot_outdeg_dist(net, label, outpath):
     :return: unique out-degree list
     
     """
-    unique_deg, unique_cnt = networkit_based.networkit_util.get_deg_dist(net, label, outpath, degree_type='out')
+    unique_deg, unique_cnt = networkit_util.get_and_write_deg_dist(net, label, outpath, degree_type='out')
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.loglog(unique_deg, unique_cnt, 'r*', label=label)
@@ -108,7 +108,7 @@ def plot_ccum_degree_dist(net, label, outpath, degree_type='all'):
     :return: figure
     
     """
-    unique_deg, unique_cnt = networkit_based.networkit_util.get_cc_deg_dist(net, degree_type)
+    unique_deg, unique_cnt = networkit_util.get_cc_deg_dist(net, degree_type)
     title = {'all': '', 'in': 'In', 'out': 'Out'}
     outfile_name = {'all': 'cc', 'in': 'cc-in', 'out': 'cc-out'}
     marker_color = {'all': 'b', 'in': 'g', 'out': 'r'}
@@ -192,7 +192,7 @@ def plot_assorsativity(net, label, outpath, degree_type='all'):
     :return: None
     
     """
-    deg_seq, nbdeg_seq = networkit_based.networkit_util.get_deg_nbdeg(net, degree_type)
+    deg_seq, nbdeg_seq = networkit_util.get_deg_nbdeg(net, degree_type)
     title = {'all': '', 'in': 'In-', 'out': 'Out-'}
     outfile_name = {'all': 'assorsativity', 'in': 'assorsativity-in', 'out': 'assorsativity-out'}
     marker_color = {'all': 'b', 'in': 'g', 'out': 'r'}
@@ -218,7 +218,7 @@ def plot_connected_component_dist(net, label, outpath):
     :return: connected component size distribution
     
     """
-    cc = networkit_based.networkit_util.get_connected_components(net)
+    cc = networkit_util.get_connected_components(net)
     cc_size, cc_cnt = np.unique(cc, return_counts=True)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -244,7 +244,7 @@ def plot_wcc_dist(net, label, outpath):
     :return: weakly connected component size distribution
     
     """
-    wcc = networkit_based.networkit_util.get_wcc(net)
+    wcc = networkit_util.get_wcc(net)
     wcc_size, wcc_cnt = np.unique(wcc, return_counts=True)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -270,7 +270,7 @@ def plot_scc_dist(net, label, outpath):
     :return: strongly connected component size distribution
 
     """
-    scc = networkit_based.networkit_util.get_scc(net)
+    scc = networkit_util.get_scc(net)
     scc_size, scc_cnt = np.unique(scc, return_counts=True)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
@@ -296,7 +296,7 @@ def plot_betweeness(net, label, outpath):
     :return: None
     
     """
-    _, betweeness_values = networkit_based.networkit_util.get_betweeness(net, label, outpath)
+    _, betweeness_values = networkit_util.get_betweeness(net, label, outpath)
     unique_value, unique_cnt = np.unique(betweeness_values, return_counts=True)
     unique_cumcnt = np.cumsum(unique_cnt) / sum(unique_cnt)
     fig = plt.figure()
@@ -321,7 +321,7 @@ def plot_eigenvector_centrality(net, label, outpath):
     :return: None
     
     """
-    _, eigenvector_centrality_values = networkit_based.networkit_util.get_eigenvector_centrality(net, label, outpath)
+    _, eigenvector_centrality_values = networkit_util.get_eigenvector_centrality(net, label, outpath)
     unique_value, unique_cnt = np.unique(eigenvector_centrality_values, return_counts=True)
     unique_cumcnt = np.cumsum(unique_cnt) / sum(unique_cnt)
     fig = plt.figure()
@@ -345,7 +345,7 @@ def plot_pagerank(net, label, outpath):
 
     :return: None
     """
-    _, pagerank_values = networkit_based.networkit_util.get_pagerank(net, label, outpath)
+    _, pagerank_values = networkit_util.get_pagerank(net, label, outpath)
     unique_value, unique_cnt = np.unique(pagerank_values, return_counts=True)
     unique_cumcnt = np.cumsum(unique_cnt) / sum(unique_cnt)
     fig = plt.figure()
@@ -370,7 +370,7 @@ def plot_hop_dist(net, label, outpath):
     :return: None
    
     """
-    dist, proportion = networkit_based.networkit_util.get_hop_distr(net, label, outpath)
+    dist, proportion = networkit_util.get_hop_distr(net, label, outpath)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     ax.plot(dist, proportion, 'g*', label=label)
@@ -412,7 +412,7 @@ if __name__ == '__main__':
 
     filepath = "/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/NELL/nell-all-id-pair"
     net = graphio.readGraph(filepath, Format.EdgeList, separator='\t', firstNode=0, continuous=False, directed=False)
-    subgraph = networkit_based.networkit_util.get_lcc_subgraph(net)
+    subgraph = networkit_util.get_lcc_subgraph(net)
     label = 'test-hopplot'
     outpath = './output/'
     plot_hop_dist(subgraph, label, outpath)

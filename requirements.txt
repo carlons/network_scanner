@@ -30,6 +30,8 @@
 #
 ###### Requirements without Version Specifiers ######
 numpy
+scipy
+matplotlib
 snap
 networkx
 networkit

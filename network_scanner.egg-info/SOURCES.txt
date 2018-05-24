@@ -41,3 +41,5 @@ network_scanner/snap_based/probase_analysis.py
 network_scanner/snap_based/snap_analysis.py
 network_scanner/snap_based/yago_all_analysis.py
 network_scanner/snap_based/yago_data_analysis.py
+network_scanner/tests/__init__.py
+network_scanner/tests/test_network_analysis.py

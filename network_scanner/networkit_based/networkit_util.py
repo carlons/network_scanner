@@ -7,7 +7,29 @@ import scipy.stats
 import random
 
 
-def get_deg_dist(net, label, outpath, degree_type='all'):
+def get_deg_dist(net, degree_type='all'):
+    """
+    get (in/out)degree distribution
+    :param net: networkit graph
+    :param degree_type: 'all' 'in' 'out'
+    :return: https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique
+
+    """
+    if degree_type not in ['all', 'in', 'out']:
+        print("ERROR degree type.")
+        return
+    if degree_type == 'all':
+        ret = [net.degree(node) for node in net.nodes()]
+        return np.unique(ret, return_counts=True)
+    if degree_type == 'in':
+        ret = [net.degreeIn(node) for node in net.nodes()]
+        return np.unique(ret, return_counts=True)
+    if degree_type == 'out':
+        ret = [net.degreeOut(node) for node in net.nodes()]
+        return np.unique(ret, return_counts=True)
+
+
+def get_and_write_deg_dist(net, label, outpath, degree_type='all'):
     """
     get (in/out)degree distribution
     :param net: networkit graph
@@ -279,10 +301,10 @@ def get_eigenvector_centrality(net, label, outpath):
     """
     eigenvector_centrality = centrality.EigenvectorCentrality(net,  tol=1e-9)
     eigenvector_centrality.run()
-    eigenvector_file = outpath + label + '-eigenvector-centrality-top100'
+    eigenvector_file = outpath + label + '-eigenvector-centrality-falseid-value'
     nodes_id, eigenvector_centrality_values = zip(*eigenvector_centrality.ranking())
     eigenvector_ranking = open(eigenvector_file, 'w')
-    for i in range(100):
+    for i in range(len(nodes_id)):
         eigenvector_ranking.write(str(nodes_id[i]) + '\t' + str(eigenvector_centrality_values[i]) + '\n')
     eigenvector_ranking.close()
     return nodes_id, eigenvector_centrality_values
