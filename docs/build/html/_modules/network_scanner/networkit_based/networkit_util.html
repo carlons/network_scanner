@@ -1,0 +1,574 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.networkit_based.networkit_util &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for network_scanner.networkit_based.networkit_util</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">networkit</span>
+<span class="kn">from</span> <span class="nn">networkit</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.sparse.csgraph</span>
+<span class="kn">import</span> <span class="nn">scipy.sparse.linalg</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+
+<div class="viewcode-block" id="get_deg_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_deg_dist">[docs]</a><span class="k">def</span> <span class="nf">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get (in/out)degree distribution</span>
+<span class="sd">    :param net: networkit graph</span>
+<span class="sd">    :param label</span>
+<span class="sd">    :param outpath</span>
+<span class="sd">    :param degree_type: &#39;all&#39; &#39;in&#39; &#39;out&#39;</span>
+<span class="sd">    :return: https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">degree_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR degree type.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">degree_type</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">degree_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-falseid-degree&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="n">deg</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">degree_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">deg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deg</span><span class="p">)</span>
+        <span class="n">degree_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">degree_type</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">indegree_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-falseid-indegree&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="n">indeg</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">degreeIn</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">indegree_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indeg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indeg</span><span class="p">)</span>
+        <span class="c1"># ret = [net.degreeIn(node) for node in net.nodes()]</span>
+        <span class="n">indegree_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">degree_type</span> <span class="o">==</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">outdegree_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-falseid-outdegree&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="n">outdeg</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">degreeOut</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">outdegree_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">outdeg</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outdeg</span><span class="p">)</span>
+        <span class="c1"># ret = [net.degreeOut(node) for node in net.nodes()]</span>
+        <span class="n">outdegree_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_cc_deg_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_cc_deg_dist">[docs]</a><span class="k">def</span> <span class="nf">get_cc_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get complementary cumulative degree distribution</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param degree_type: &#39;all&#39; &#39;in&#39; &#39;out&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    :return: unique value and count</span>
+<span class="sd">   </span>
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">uniqe_ele</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">degree_type</span><span class="p">)</span>
+    <span class="n">tmp_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span>
+    <span class="n">unique_cc_cnt</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span><span class="o">/</span><span class="n">tmp_sum</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">))]</span>
+    <span class="c1"># another solution</span>
+    <span class="c1"># ant = tmp_sum - np.cumsum(unique_cnt) + unique_cnt</span>
+    <span class="c1"># ant = ant/tmp_sum</span>
+    <span class="k">return</span> <span class="n">uniqe_ele</span><span class="p">,</span> <span class="n">unique_cc_cnt</span></div>
+
+
+<div class="viewcode-block" id="get_deg_nbdeg"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_deg_nbdeg">[docs]</a><span class="k">def</span> <span class="nf">get_deg_nbdeg</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get (in/out)degree vs neighbor (in/out)degree</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param degree_type: &#39;all&#39; &#39;in&#39; &#39;out&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    :return: degree and average neighbour degree</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">deg_seq</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nbdeg_seq</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">degree_type</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+            <span class="n">deg_seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+            <span class="n">avg_deg</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">node_neighbors</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_neighbors</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">node_neighbors</span><span class="p">:</span>
+                    <span class="c1"># print(net.degree(ele))</span>
+                    <span class="n">avg_deg</span> <span class="o">=</span> <span class="n">avg_deg</span> <span class="o">+</span> <span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+                <span class="c1"># print(avg_deg, len(node_neighbors))</span>
+                <span class="n">avg_deg</span> <span class="o">=</span> <span class="n">avg_deg</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">node_neighbors</span><span class="p">)</span>
+            <span class="n">nbdeg_seq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">avg_deg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deg_seq</span><span class="p">,</span> <span class="n">nbdeg_seq</span></div>
+
+
+<div class="viewcode-block" id="get_reciprocity"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_reciprocity">[docs]</a><span class="k">def</span> <span class="nf">get_reciprocity</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get reciprocity</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: reciprocity value</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">numberOfEdges</span><span class="p">()</span>
+    <span class="n">colinks</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">edges</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">net</span><span class="o">.</span><span class="n">hasEdge</span><span class="p">(</span><span class="n">ele</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ele</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">colinks</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">colinks</span> <span class="o">/</span> <span class="n">num_edges</span></div>
+
+
+<div class="viewcode-block" id="get_spectral_norm"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_spectral_norm">[docs]</a><span class="k">def</span> <span class="nf">get_spectral_norm</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get spectral norm. time consuming.</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: eigenvalue and eigenvector of adjacent matrix</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sparse_adj_matrix</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">algebraic</span><span class="o">.</span><span class="n">adjacencyMatrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">matrixType</span><span class="o">=</span><span class="s1">&#39;sparse&#39;</span><span class="p">)</span>
+    <span class="n">paras</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;k&#39;</span><span class="p">:</span> <span class="n">net</span><span class="o">.</span><span class="n">numberOfNodes</span><span class="p">()</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;which&#39;</span><span class="p">:</span> <span class="s1">&#39;LM&#39;</span><span class="p">,</span> <span class="s1">&#39;return_eigenvectors&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="n">eig_eigv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigs</span><span class="p">(</span><span class="n">sparse_adj_matrix</span><span class="p">,</span> <span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eig_eigv</span></div>
+
+
+<div class="viewcode-block" id="get_algebraic_connectivity"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_algebraic_connectivity">[docs]</a><span class="k">def</span> <span class="nf">get_algebraic_connectivity</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get algebraic connectivity. time consuming. </span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object </span>
+<span class="sd">    </span>
+<span class="sd">    :return: eigenvalue and eigenvector of laplacian matrix</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sparse_adj_matrix</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">algebraic</span><span class="o">.</span><span class="n">adjacencyMatrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">matrixType</span><span class="o">=</span><span class="s1">&#39;sparse&#39;</span><span class="p">)</span>
+    <span class="n">laplacien_matrix</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csgraph</span><span class="o">.</span><span class="n">laplacian</span><span class="p">(</span><span class="n">sparse_adj_matrix</span><span class="p">)</span>
+    <span class="n">paras</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;k&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;which&#39;</span><span class="p">:</span> <span class="s1">&#39;SR&#39;</span><span class="p">}</span>
+    <span class="n">eig_eigv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigs</span><span class="p">(</span><span class="n">laplacien_matrix</span><span class="p">,</span> <span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eig_eigv</span></div>
+
+
+<span class="k">def</span> <span class="nf">_node_degree_xy</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="n">degu</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">degreeOut</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="p">(</span><span class="n">nbr</span> <span class="k">for</span> <span class="n">nbr</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="p">:</span>
+            <span class="n">degv</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">degreeIn</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">degu</span><span class="p">,</span> <span class="n">degv</span>
+    <span class="c1"># for source, target in net.edges():</span>
+    <span class="c1">#     deg_source = net.degreeIn(source)</span>
+    <span class="c1">#     deg_target = net.degreeOut(target)</span>
+    <span class="c1">#     yield deg_source, deg_target</span>
+
+
+<span class="k">def</span> <span class="nf">_node_degree_neighbourdegree</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="n">deg_u</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">neighbors_u</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">neighbors_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors_u</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">neighbors_num</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">average_degree</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">nb</span> <span class="ow">in</span> <span class="n">neighbors_u</span><span class="p">:</span>
+            <span class="n">average_degree</span> <span class="o">+=</span> <span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+        <span class="n">average_degree</span> <span class="o">=</span> <span class="n">average_degree</span> <span class="o">/</span> <span class="n">neighbors_num</span>
+        <span class="k">yield</span> <span class="n">deg_u</span><span class="p">,</span> <span class="n">average_degree</span>
+
+
+<div class="viewcode-block" id="get_assorsativity"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_assorsativity">[docs]</a><span class="k">def</span> <span class="nf">get_assorsativity</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get assorsativity</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: assorsativity value</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xy</span> <span class="o">=</span> <span class="n">_node_degree_xy</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">xy</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_connected_components"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_connected_components">[docs]</a><span class="k">def</span> <span class="nf">get_connected_components</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get sizes of connected components</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: connected component distribution</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">ConnectedComponents</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">cc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">num_of_cc</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">numberOfComponents</span><span class="p">()</span>
+    <span class="n">sizes_of_cc</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">getComponentSizes</span><span class="p">()</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="p">[</span><span class="n">sizes_of_cc</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sizes_of_cc</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">cc</span></div>
+
+
+<div class="viewcode-block" id="get_wcc"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_wcc">[docs]</a><span class="k">def</span> <span class="nf">get_wcc</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get sizes of weakly connected components</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: weakly connected component distribution</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wcc</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">WeaklyConnectedComponents</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">wcc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">num_of_wcc</span> <span class="o">=</span> <span class="n">wcc</span><span class="o">.</span><span class="n">numberOfComponents</span><span class="p">()</span>
+    <span class="n">sizes_of_wcc</span> <span class="o">=</span> <span class="n">wcc</span><span class="o">.</span><span class="n">getComponentSizes</span><span class="p">()</span>
+    <span class="n">wcc</span> <span class="o">=</span> <span class="p">[</span><span class="n">sizes_of_wcc</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sizes_of_wcc</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">wcc</span></div>
+
+
+<div class="viewcode-block" id="get_scc"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_scc">[docs]</a><span class="k">def</span> <span class="nf">get_scc</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get sizes of strongly connected components</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: strongly connected component distribution</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scc</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">StronglyConnectedComponents</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">num_of_scc</span> <span class="o">=</span> <span class="n">scc</span><span class="o">.</span><span class="n">numberOfComponents</span><span class="p">()</span>
+    <span class="n">scc_partitions</span> <span class="o">=</span> <span class="n">scc</span><span class="o">.</span><span class="n">getPartition</span><span class="p">()</span>
+    <span class="c1"># reference https://networkit.iti.kit.edu/api/networkit.html?highlight=partition#networkit.Partition</span>
+    <span class="n">scc</span> <span class="o">=</span> <span class="n">scc_partitions</span><span class="o">.</span><span class="n">subsetSizes</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">scc</span></div>
+
+
+<div class="viewcode-block" id="get_betweeness"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_betweeness">[docs]</a><span class="k">def</span> <span class="nf">get_betweeness</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get betweeness centrality</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: result output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: node id and betweeness centrality value</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">betweeness</span> <span class="o">=</span> <span class="n">centrality</span><span class="o">.</span><span class="n">ApproxBetweenness</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">universalConstant</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">betweeness</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">betweeness_file</span> <span class="o">=</span> <span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-betweeness-falseid-value&#39;</span>
+    <span class="n">betweeness_ranking</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">betweeness_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">nodes_id</span><span class="p">,</span> <span class="n">betweeness_values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">betweeness</span><span class="o">.</span><span class="n">ranking</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">)):</span>
+        <span class="n">betweeness_ranking</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">betweeness_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">betweeness_ranking</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">nodes_id</span><span class="p">,</span> <span class="n">betweeness_values</span></div>
+
+
+<div class="viewcode-block" id="get_eigenvector_centrality"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_eigenvector_centrality">[docs]</a><span class="k">def</span> <span class="nf">get_eigenvector_centrality</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get eigenvector centrality</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: result output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: node id and eigenvector centrality value</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">eigenvector_centrality</span> <span class="o">=</span> <span class="n">centrality</span><span class="o">.</span><span class="n">EigenvectorCentrality</span><span class="p">(</span><span class="n">net</span><span class="p">,</span>  <span class="n">tol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">eigenvector_centrality</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">eigenvector_file</span> <span class="o">=</span> <span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-eigenvector-centrality-top100&#39;</span>
+    <span class="n">nodes_id</span><span class="p">,</span> <span class="n">eigenvector_centrality_values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">eigenvector_centrality</span><span class="o">.</span><span class="n">ranking</span><span class="p">())</span>
+    <span class="n">eigenvector_ranking</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">eigenvector_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">eigenvector_ranking</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">eigenvector_centrality_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">eigenvector_ranking</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">nodes_id</span><span class="p">,</span> <span class="n">eigenvector_centrality_values</span></div>
+
+
+<div class="viewcode-block" id="get_pagerank"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_pagerank">[docs]</a><span class="k">def</span> <span class="nf">get_pagerank</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get pagerank value</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: result output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: node id and pagerank value</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pagerank_value</span> <span class="o">=</span> <span class="n">centrality</span><span class="o">.</span><span class="n">PageRank</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">damp</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">9</span><span class="p">)</span>
+    <span class="n">pagerank_value</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">pagerank_file</span> <span class="o">=</span> <span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-pagerank-falseid-value&#39;</span>
+    <span class="n">nodes_id</span><span class="p">,</span> <span class="n">pagerank_values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pagerank_value</span><span class="o">.</span><span class="n">ranking</span><span class="p">())</span>
+    <span class="n">pagerank_ranking</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pagerank_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">)):</span>
+        <span class="n">pagerank_ranking</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pagerank_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">pagerank_ranking</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">nodes_id</span><span class="p">,</span> <span class="n">pagerank_values</span></div>
+
+
+<div class="viewcode-block" id="get_hop_distr"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_hop_distr">[docs]</a><span class="k">def</span> <span class="nf">get_hop_distr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get hop distribution</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: result output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: distance and proportion</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hop_appro</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">HopPlotApproximation</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">hop_appro</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">hop_dist</span> <span class="o">=</span> <span class="n">hop_appro</span><span class="o">.</span><span class="n">getHopPlot</span><span class="p">()</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">proportion</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hop_dist</span><span class="p">):</span>
+        <span class="n">dist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">proportion</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hop_dist</span><span class="p">[</span><span class="n">d</span><span class="p">])</span>
+    <span class="n">hop_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;hop-distribution&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dist</span><span class="p">)):</span>
+        <span class="n">hop_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">proportion</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">hop_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">dist</span><span class="p">,</span> <span class="n">proportion</span></div>
+
+
+<div class="viewcode-block" id="get_lcc_subgraph"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_lcc_subgraph">[docs]</a><span class="k">def</span> <span class="nf">get_lcc_subgraph</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get the largest connected component</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: subgraph induced by largest connected component</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">ConnectedComponents</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">cc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">partition</span> <span class="o">=</span> <span class="n">cc</span><span class="o">.</span><span class="n">getPartition</span><span class="p">()</span>
+    <span class="n">scc_size_map</span> <span class="o">=</span> <span class="n">partition</span><span class="o">.</span><span class="n">subsetSizeMap</span><span class="p">()</span>
+    <span class="n">lcc_size</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lcc_id</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">scc_size_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">scc_size_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lcc_size</span><span class="p">:</span>
+            <span class="n">lcc_size</span> <span class="o">=</span> <span class="n">scc_size_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+            <span class="n">lcc_id</span> <span class="o">=</span> <span class="nb">id</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lcc_id</span><span class="p">,</span> <span class="n">lcc_size</span><span class="p">)</span>
+    <span class="n">lcc_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">partition</span><span class="o">.</span><span class="n">getMembers</span><span class="p">(</span><span class="n">lcc_id</span><span class="p">))</span>
+    <span class="n">result_subgraph</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">subgraphFromNodes</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">lcc_index</span><span class="p">)</span>
+    <span class="c1"># print(result_sbgraph.numberOfNodes())</span>
+    <span class="c1"># print(result_sbgraph.numberOfEdges())</span>
+    <span class="k">return</span> <span class="n">result_subgraph</span></div>
+
+
+<div class="viewcode-block" id="get_lscc_subgraph"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_lscc_subgraph">[docs]</a><span class="k">def</span> <span class="nf">get_lscc_subgraph</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get the largest strongly connected component</span>
+
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :return: subgraph induced by largest strongly connected component</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scc</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">StronglyConnectedComponents</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">scc_partition</span> <span class="o">=</span> <span class="n">scc</span><span class="o">.</span><span class="n">getPartition</span><span class="p">()</span>
+    <span class="n">scc_size_map</span> <span class="o">=</span> <span class="n">scc_partition</span><span class="o">.</span><span class="n">subsetSizeMap</span><span class="p">()</span>
+    <span class="n">lscc_size</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">lscc_id</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">scc_size_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">scc_size_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">lscc_size</span><span class="p">:</span>
+            <span class="n">lscc_size</span> <span class="o">=</span> <span class="n">scc_size_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+            <span class="n">lscc_id</span> <span class="o">=</span> <span class="nb">id</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lscc_id</span><span class="p">,</span> <span class="n">lscc_size</span><span class="p">)</span>
+    <span class="n">lscc_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scc_partition</span><span class="o">.</span><span class="n">getMembers</span><span class="p">(</span><span class="n">lscc_id</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lscc_index</span><span class="p">))</span>
+    <span class="n">result_subgraph</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">Graph</span><span class="o">.</span><span class="n">subgraphFromNodes</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">lscc_index</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result_subgraph</span><span class="o">.</span><span class="n">numberOfNodes</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result_subgraph</span><span class="o">.</span><span class="n">numberOfEdges</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">result_subgraph</span></div>
+
+
+<div class="viewcode-block" id="write_map_node_id"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.write_map_node_id">[docs]</a><span class="k">def</span> <span class="nf">write_map_node_id</span><span class="p">(</span><span class="n">net_reader</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    write mapNodeId to file.</span>
+<span class="sd">    </span>
+<span class="sd">    :param net_reader: networkit reader object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: result output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: dict. key is real id in origin id pair file, and value is id used in program</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-map-node-ids&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">map_node_ids</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">graphio</span><span class="o">.</span><span class="n">EdgeListReader</span><span class="o">.</span><span class="n">getNodeMap</span><span class="p">(</span><span class="n">net_reader</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">raw_id</span> <span class="ow">in</span> <span class="n">map_node_ids</span><span class="p">:</span>
+        <span class="n">processed_id</span> <span class="o">=</span> <span class="n">map_node_ids</span><span class="p">[</span><span class="n">raw_id</span><span class="p">]</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">raw_id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">processed_id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_falseid_trueid_map"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_falseid_trueid_map">[docs]</a><span class="k">def</span> <span class="nf">get_falseid_trueid_map</span><span class="p">(</span><span class="n">map_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get node id map</span>
+<span class="sd">    </span>
+<span class="sd">    :param map_filename: map node id file</span>
+<span class="sd">    </span>
+<span class="sd">    :return: key is id used in program, and value is real id in origin id pair file</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">map_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">map_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">map_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">split_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">split_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">split_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">map_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="get_average_shortest_path_appro"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_util.get_average_shortest_path_appro">[docs]</a><span class="k">def</span> <span class="nf">get_average_shortest_path_appro</span><span class="p">(</span><span class="n">connected_net</span><span class="p">,</span> <span class="n">sample_num</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    estimate average shortest path.</span>
+<span class="sd">    </span>
+<span class="sd">    subgraph bug! why does subgraph store unnecessary information of origin graph? BFS can detect this bug. </span>
+<span class="sd">    </span>
+<span class="sd">    :param connected_net: connected graph</span>
+<span class="sd">    </span>
+<span class="sd">    :param sample: sample size. the larger the number is,  the slower the program is.</span>
+<span class="sd">    </span>
+<span class="sd">    :return: approximately average shortest path</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">connected_net</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_num</span><span class="p">):</span>
+        <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">))])</span>
+    <span class="n">sampled_path_length</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+        <span class="n">bfs</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">BFS</span><span class="p">(</span><span class="n">connected_net</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span> <span class="n">storePaths</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">bfs</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="n">sampled_path_length</span> <span class="o">=</span> <span class="n">sampled_path_length</span> <span class="o">+</span> <span class="n">bfs</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sampled_path_length</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="s1">&#39;/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/YAGO3/facts-id-pair&#39;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;facts-id-pair&quot;</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s1">&#39;./output/&#39;</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+    <span class="c1"># net = graphio.readGraph(filepath, Format.EdgeList, separator=&#39;\t&#39;, firstNode=0, continuous=False, directed=False)</span>
+    <span class="c1"># get_deg_dist(net)</span>
+    <span class="c1"># get_cc_deg_dist(net, degree_type=&#39;all&#39;)</span>
+    <span class="c1"># shortest_distances =distance.APSP(net)</span>
+    <span class="c1"># shortest_distances.run()</span>
+    <span class="c1"># shortest_distances.getDistances()</span>
+    <span class="c1"># print(shortest_distances)</span>
+
+    <span class="c1"># filepath = &quot;./input/NELL/nell-all-id-pair&quot;</span>
+    <span class="c1"># net = graphio.readGraph(filepath, Format.EdgeList, separator=&#39;\t&#39;, firstNode=0, continuous=False, directed=False)</span>
+    <span class="c1"># subgraph = get_lcc_subgraph(net)</span>
+    <span class="c1"># avg_shortest_path = get_average_shortest_path_appro(subgraph, 1)</span>
+    <span class="c1"># print(avg_shortest_path)</span>
+
+    <span class="c1"># write degree to file</span>
+    <span class="n">net_reader</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">graphio</span><span class="o">.</span><span class="n">EdgeListReader</span><span class="p">(</span><span class="n">separator</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">firstNode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">net_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">write_map_node_id</span><span class="p">(</span><span class="n">net_reader</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span> <span class="o">+</span> <span class="s1">&#39;undirected-&#39;</span><span class="p">)</span>
+    <span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+
+    <span class="n">net_reader</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">graphio</span><span class="o">.</span><span class="n">EdgeListReader</span><span class="p">(</span><span class="n">separator</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">firstNode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">net_reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="n">write_map_node_id</span><span class="p">(</span><span class="n">net_reader</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span> <span class="o">+</span> <span class="s1">&#39;directed-&#39;</span><span class="p">)</span>
+    <span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span>
+    <span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,132 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.snap_based.centrality_plot &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for network_scanner.snap_based.centrality_plot</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="plot_ccum_centrality_dist"><a class="viewcode-back" href="../../../network_scanner.snap_based.html#network_scanner.snap_based.centrality_plot.plot_ccum_centrality_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_ccum_centrality_dist</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">centrality_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot complementary cumulative centrality distribution</span>
+<span class="sd">    :param centrality_filename:</span>
+<span class="sd">    :param label:</span>
+<span class="sd">    :param outpath:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_val</span><span class="p">,</span> <span class="n">unique_cc_prob</span> <span class="o">=</span> <span class="n">get_cc_centrality_distr</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">)</span>
+    <span class="n">centrality_style</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;eigen_vector_centr&#39;</span><span class="p">:</span> <span class="s1">&#39;c*&#39;</span><span class="p">,</span> <span class="s1">&#39;pagerank&#39;</span><span class="p">:</span> <span class="s1">&#39;g*&#39;</span><span class="p">,</span> <span class="s1">&#39;hub&#39;</span><span class="p">:</span> <span class="s1">&#39;r*&#39;</span><span class="p">,</span> <span class="s1">&#39;authority&#39;</span><span class="p">:</span> <span class="s1">&#39;m*&#39;</span><span class="p">}</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">unique_val</span><span class="p">,</span> <span class="n">unique_cc_prob</span><span class="p">,</span> <span class="n">centrality_style</span><span class="p">[</span><span class="n">centrality_name</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(x&gt;=v)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="get_cc_centrality_distr"><a class="viewcode-back" href="../../../network_scanner.snap_based.html#network_scanner.snap_based.centrality_plot.get_cc_centrality_distr">[docs]</a><span class="k">def</span> <span class="nf">get_cc_centrality_distr</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get complementary cumulative centrality distribution</span>
+<span class="sd">    :param centrality_filename:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">centrality_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">centrality_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">splited_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splited_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">centrality_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">unique_val</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">tmp_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span>
+    <span class="c1"># unique_cc_cnt = [sum(unique_cnt[i:]) / tmp_sum for i in range(len(unique_cnt))]</span>
+    <span class="n">unique_cc_cnt</span> <span class="o">=</span> <span class="n">tmp_sum</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span> <span class="o">+</span> <span class="n">unique_cnt</span>
+    <span class="n">unique_cc_prob</span> <span class="o">=</span> <span class="n">unique_cc_cnt</span> <span class="o">/</span> <span class="n">tmp_sum</span>
+    <span class="k">return</span> <span class="n">unique_val</span><span class="p">,</span> <span class="n">unique_cc_prob</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;./output/probase-id-pair/probase-id-pair-&#39;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;probase-id-pair-&#39;</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s1">&#39;./output/probase-id-pair/&#39;</span>
+    <span class="n">centrality_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;eigen_vector_centr&#39;</span><span class="p">,</span> <span class="s1">&#39;pagerank&#39;</span><span class="p">,</span> <span class="s1">&#39;hub&#39;</span><span class="p">,</span> <span class="s1">&#39;authority&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">centrality_name</span><span class="p">:</span>
+        <span class="n">paras</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;centrality_filename&#39;</span><span class="p">:</span> <span class="n">filename</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">label</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;outpath&#39;</span><span class="p">:</span> <span class="n">outpath</span><span class="p">,</span> <span class="s1">&#39;centrality_name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">}</span>
+        <span class="n">plot_ccum_centrality_dist</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,16 @@
+Metadata-Version: 1.1
+Name: network-scanner
+Version: 0.1.0
+Summary: network_scanner
+Home-page: http://github.com/carlons/
+Author: Xikun Huang
+Author-email: huangxikun@amss.ac.cn
+License: Apache Software License
+Description: # To add.
+Platform: any
+Classifier: Programming Language :: Python
+Classifier: Natural Language :: English
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Libraries :: Application Frameworks

@@ -1,0 +1,221 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.snap_based.centrality_analysis &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for network_scanner.snap_based.centrality_analysis</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">snap</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<div class="viewcode-block" id="get_pagerank"><a class="viewcode-back" href="../../../network_scanner.snap_based.html#network_scanner.snap_based.centrality_analysis.get_pagerank">[docs]</a><span class="k">def</span> <span class="nf">get_pagerank</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get pagerank value. For directed graph</span>
+<span class="sd">    :param net:</span>
+<span class="sd">    :param label:</span>
+<span class="sd">    :param outpath:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PRankH</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">TIntFltH</span><span class="p">()</span>
+    <span class="n">snap</span><span class="o">.</span><span class="n">GetPageRank</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">PRankH</span><span class="p">)</span>
+    <span class="n">pagerank_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-pagerank&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">pagerank_top_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-pagerank-top100&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">pagerank_value</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">PRankH</span><span class="p">:</span>
+         <span class="n">pagerank_value</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">PRankH</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="n">pagerank_value</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pagerank_value</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">nodes_id</span><span class="p">,</span> <span class="n">pagerank_values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pagerank_value</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">)):</span>
+        <span class="n">pagerank_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pagerank_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">pagerank_top_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">nodes_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pagerank_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">pagerank_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">pagerank_top_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">nodes_id</span><span class="p">,</span> <span class="n">pagerank_values</span></div>
+
+
+<div class="viewcode-block" id="get_eigen_vector_centr"><a class="viewcode-back" href="../../../network_scanner.snap_based.html#network_scanner.snap_based.centrality_analysis.get_eigen_vector_centr">[docs]</a><span class="k">def</span> <span class="nf">get_eigen_vector_centr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get eigen vector centrality. For undirected graph</span>
+<span class="sd">    :param net:</span>
+<span class="sd">    :param label:</span>
+<span class="sd">    :param outpath:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NIdEigenH</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">TIntFltH</span><span class="p">()</span>
+    <span class="n">snap</span><span class="o">.</span><span class="n">GetEigenVectorCentr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">NIdEigenH</span><span class="p">)</span>
+    <span class="n">eigen_vector_centr_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-eigen_vector_centr&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">eigen_vector_centr_top_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-eigen_vector_centr-top100&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">eigen_vector_centr</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">NIdEigenH</span><span class="p">:</span>
+        <span class="n">eigen_vector_centr</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">NIdEigenH</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="n">eigen_vector_centr</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">eigen_vector_centr</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">id</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">eigen_vector_centr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)):</span>
+        <span class="n">eigen_vector_centr_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">eigen_vector_centr_top_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">eigen_vector_centr_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">eigen_vector_centr_top_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">id</span><span class="p">,</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="get_hits"><a class="viewcode-back" href="../../../network_scanner.snap_based.html#network_scanner.snap_based.centrality_analysis.get_hits">[docs]</a><span class="k">def</span> <span class="nf">get_hits</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get hits centrality. For directed graph</span>
+<span class="sd">    :param net:</span>
+<span class="sd">    :param label:</span>
+<span class="sd">    :param outpath:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NIdHubH</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">TIntFltH</span><span class="p">()</span>
+    <span class="n">NIdAuthH</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">TIntFltH</span><span class="p">()</span>
+    <span class="n">snap</span><span class="o">.</span><span class="n">GetHits</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">NIdHubH</span><span class="p">,</span> <span class="n">NIdAuthH</span><span class="p">)</span>
+    <span class="n">hub_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-hub&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">hub_top_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-hub-top100&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">authority_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-authority&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">authority_top_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-authority-top100&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="c1"># process hub</span>
+    <span class="n">hub</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">NIdHubH</span><span class="p">:</span>
+        <span class="n">hub</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">NIdHubH</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="n">hub</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hub</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">hub_id</span><span class="p">,</span> <span class="n">hub_value</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">hub</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hub_id</span><span class="p">)):</span>
+        <span class="n">hub_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hub_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hub_value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">hub_top_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">hub_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">hub_value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># process authority</span>
+    <span class="n">authority</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">NIdAuthH</span><span class="p">:</span>
+        <span class="n">authority</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">NIdAuthH</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="n">authority</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">authority</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">authority_id</span><span class="p">,</span> <span class="n">authority_value</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">authority</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">authority_id</span><span class="p">)):</span>
+        <span class="n">authority_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">authority_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">authority_value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">authority_top_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">authority_id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">authority_value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">hub_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">hub_top_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">authority_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">authority_top_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">hub</span><span class="p">,</span> <span class="n">authority</span></div>
+
+
+<div class="viewcode-block" id="get_betweenness_centr"><a class="viewcode-back" href="../../../network_scanner.snap_based.html#network_scanner.snap_based.centrality_analysis.get_betweenness_centr">[docs]</a><span class="k">def</span> <span class="nf">get_betweenness_centr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get betweenness centrality.</span>
+<span class="sd">    :param net:</span>
+<span class="sd">    :param label:</span>
+<span class="sd">    :param outpath:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Nodes</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">TIntFltH</span><span class="p">()</span>
+    <span class="n">Edges</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">TIntPrFltH</span><span class="p">()</span>
+    <span class="n">snap</span><span class="o">.</span><span class="n">GetBetweennessCentr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">Nodes</span><span class="p">,</span> <span class="n">Edges</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">node_betweenness_centr_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-node_btweennesss_centr&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">node_betweenness_centr_top_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-node_betweenness_centr-top100&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">node_betweenness_centr</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Nodes</span><span class="p">:</span>
+        <span class="n">node_betweenness_centr</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">Nodes</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+    <span class="n">node_betweenness_centr</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">node_betweenness_centr</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">id</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">node_betweenness_centr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)):</span>
+        <span class="n">node_betweenness_centr_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">node_betweenness_centr_top_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">node_betweenness_centr_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">node_betweenness_centr_top_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">id</span><span class="p">,</span> <span class="n">value</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># parameters</span>
+    <span class="c1"># filepath = &#39;../input/Test/toy_graph&#39;</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="s2">&quot;/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/YAGO3/facts-id-pair&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;facts-id-pair&quot;</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s1">&#39;./output/&#39;</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+
+    <span class="c1"># check whether the output directory exists</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">LoadEdgeList</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">PNGraph</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">paras</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;net&#39;</span><span class="p">:</span> <span class="n">net</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s1">&#39;outpath&#39;</span><span class="p">:</span> <span class="n">outpath</span><span class="p">}</span>
+    <span class="n">get_pagerank</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="n">get_hits</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">snap</span><span class="o">.</span><span class="n">LoadEdgeList</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">PUNGraph</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">paras</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;net&#39;</span><span class="p">:</span> <span class="n">net</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s1">&#39;outpath&#39;</span><span class="p">:</span> <span class="n">outpath</span><span class="p">}</span>
+    <span class="n">get_eigen_vector_centr</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

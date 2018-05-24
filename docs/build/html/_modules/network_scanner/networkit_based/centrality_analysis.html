@@ -1,0 +1,249 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.networkit_based.centrality_analysis &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for network_scanner.networkit_based.centrality_analysis</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">mpmath</span>
+<span class="kn">import</span> <span class="nn">powerlaw</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">networkit_based.networkit_util</span>
+
+
+<div class="viewcode-block" id="get_top_k_id"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.centrality_analysis.get_top_k_id">[docs]</a><span class="k">def</span> <span class="nf">get_top_k_id</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="n">map_filename</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get top k&#39;s id</span>
+<span class="sd">    </span>
+<span class="sd">    :param centrality_file: centrality filename</span>
+<span class="sd">    </span>
+<span class="sd">    :param map_filename: map filename</span>
+<span class="sd">    </span>
+<span class="sd">    :param k: number</span>
+<span class="sd">    </span>
+<span class="sd">    :return: top k id</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">centrality_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">id_map</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_falseid_trueid_map</span><span class="p">(</span><span class="n">map_filename</span><span class="p">)</span>
+    <span class="n">top_k_id</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">centrality_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">splited_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">top_k_id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">splited_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">cnt</span> <span class="o">&gt;=</span> <span class="n">k</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">centrality_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">top_k_id</span></div>
+
+
+<div class="viewcode-block" id="get_top_k_name"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.centrality_analysis.get_top_k_name">[docs]</a><span class="k">def</span> <span class="nf">get_top_k_name</span><span class="p">(</span><span class="n">top_k_id</span><span class="p">,</span> <span class="n">index_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get top k&#39;s name from index file</span>
+<span class="sd">    </span>
+<span class="sd">    :param top_k_id: top k id</span>
+<span class="sd">    </span>
+<span class="sd">    :param index_filename: index filename</span>
+<span class="sd">    </span>
+<span class="sd">    :return: top k name</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">index_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">index_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">id_name_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">index_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">splited_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">id_name_map</span><span class="p">[</span><span class="n">splited_line</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">splited_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">index_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">top_k_name</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">top_k_id</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">id_name_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">top_k_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">top_k_name</span></div>
+
+
+<div class="viewcode-block" id="get_centrality_seq"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.centrality_analysis.get_centrality_seq">[docs]</a><span class="k">def</span> <span class="nf">get_centrality_seq</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get centrality sequence</span>
+<span class="sd">    </span>
+<span class="sd">    :param centrality_filename: centrality filename</span>
+<span class="sd">    </span>
+<span class="sd">    :return: centrality value</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">centrality_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">centrality_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">splited_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">splited_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">centrality_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="power_law_analysis"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.centrality_analysis.power_law_analysis">[docs]</a><span class="k">def</span> <span class="nf">power_law_analysis</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    analysis power law</span>
+<span class="sd">    </span>
+<span class="sd">    :param centrality_filename: centrality filename</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :param degree_type: all, in, out</span>
+<span class="sd">      </span>
+<span class="sd">    :return: None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">get_centrality_seq</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">)</span>
+    <span class="n">fit</span> <span class="o">=</span> <span class="n">powerlaw</span><span class="o">.</span><span class="n">Fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;power law fit result:&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Is discrete: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">estimate_discrete</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;x_min = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">xmin</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;power_law_alpha = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">power_law</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;power_law_D = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">power_law</span><span class="o">.</span><span class="n">D</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">R1</span><span class="p">,</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">distribution_compare</span><span class="p">(</span><span class="s1">&#39;power_law&#39;</span><span class="p">,</span> <span class="s1">&#39;exponential&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Compare with exponential:&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;R = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">R1</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;p = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p1</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">R2</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">distribution_compare</span><span class="p">(</span><span class="s1">&#39;power_law&#39;</span><span class="p">,</span> <span class="s1">&#39;truncated_power_law&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Compare with truncated power law:&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;R = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">R2</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;p = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">R3</span><span class="p">,</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">distribution_compare</span><span class="p">(</span><span class="s1">&#39;power_law&#39;</span><span class="p">,</span> <span class="s1">&#39;lognormal&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Compare with lognormal:&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;R = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">R3</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;p = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p3</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">R4</span><span class="p">,</span> <span class="n">p4</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">distribution_compare</span><span class="p">(</span><span class="s1">&#39;power_law&#39;</span><span class="p">,</span> <span class="s1">&#39;stretched_exponential&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Compare with stretched exponential:&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;R = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">R4</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;p = {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p4</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Truncated power law fit result: &#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;{0} = {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">truncated_power_law</span><span class="o">.</span><span class="n">parameter1_name</span><span class="p">,</span> <span class="n">fit</span><span class="o">.</span><span class="n">truncated_power_law</span><span class="o">.</span><span class="n">parameter1</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;{0} = {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">truncated_power_law</span><span class="o">.</span><span class="n">parameter2_name</span><span class="p">,</span> <span class="n">fit</span><span class="o">.</span><span class="n">truncated_power_law</span><span class="o">.</span><span class="n">parameter2</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Lognormal fit result: &#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;{0} = {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">lognormal</span><span class="o">.</span><span class="n">parameter1_name</span><span class="p">,</span> <span class="n">fit</span><span class="o">.</span><span class="n">lognormal</span><span class="o">.</span><span class="n">parameter1</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;{0} = {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">lognormal</span><span class="o">.</span><span class="n">parameter2_name</span><span class="p">,</span> <span class="n">fit</span><span class="o">.</span><span class="n">lognormal</span><span class="o">.</span><span class="n">parameter2</span><span class="p">))</span>
+
+    <span class="c1">####</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">plot_ccdf</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">fit</span><span class="o">.</span><span class="n">power_law</span><span class="o">.</span><span class="n">plot_ccdf</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="c1">####</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">u&quot;p(X≥x)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">u&quot;x&quot;</span><span class="p">)</span>
+
+    <span class="n">figname</span> <span class="o">=</span> <span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-powerlaw&#39;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figname</span> <span class="o">+</span> <span class="s1">&#39;.eps&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># base_centrality_path = &#39;/home/carlons/workspace_python/network_data_analysis/snap_based/output/&#39;</span>
+    <span class="n">base_centrality_path</span> <span class="o">=</span> <span class="s1">&#39;./output/&#39;</span>
+    <span class="n">centrality_filename</span> <span class="o">=</span> <span class="n">base_centrality_path</span> <span class="o">+</span> <span class="s1">&#39;probase-id-pair/probase-id-pair-pagerank-top100&#39;</span>
+    <span class="c1"># base_index_path = &#39;/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/&#39;</span>
+    <span class="c1"># index_filename = base_index_path + &#39;Probase/probase-index&#39;</span>
+    <span class="n">map_filename</span> <span class="o">=</span> <span class="s1">&#39;./output/probase-id-pair/probase-id-pair-map-node-ids&#39;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">top_k_id</span> <span class="o">=</span> <span class="n">get_top_k_id</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="n">map_filename</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">top_k_id</span><span class="p">)</span>
+    <span class="c1"># top_k_name = get_top_k_name(top_k_id, index_filename)</span>
+    <span class="c1"># for name in top_k_name:</span>
+    <span class="c1">#     print(name, &#39; \\\\&#39;)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,348 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.knowledge_graph package &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="network-scanner-knowledge-graph-package">
+<h1>network_scanner.knowledge_graph package<a class="headerlink" href="#network-scanner-knowledge-graph-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-network_scanner.knowledge_graph.dbpedia_preprocess">
+<span id="network-scanner-knowledge-graph-dbpedia-preprocess-module"></span><h2>network_scanner.knowledge_graph.dbpedia_preprocess module<a class="headerlink" href="#module-network_scanner.knowledge_graph.dbpedia_preprocess" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.dbpedia_preprocess.analysis_ontology">
+<code class="descclassname">network_scanner.knowledge_graph.dbpedia_preprocess.</code><code class="descname">analysis_ontology</code><span class="sig-paren">(</span><em>ontology_filename</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/dbpedia_preprocess.html#analysis_ontology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.dbpedia_preprocess.analysis_ontology" title="Permalink to this definition">¶</a></dt>
+<dd><p>get general information about ontology file
+:param ontolofy_filename:
+:param outpath:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.dbpedia_preprocess.create_all_index">
+<code class="descclassname">network_scanner.knowledge_graph.dbpedia_preprocess.</code><code class="descname">create_all_index</code><span class="sig-paren">(</span><em>classes_filename</em>, <em>instance_filename</em>, <em>literal_object_filename</em>, <em>index_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/dbpedia_preprocess.html#create_all_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.dbpedia_preprocess.create_all_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>create all index.
+:param classes_filename:
+:param instance_filename:
+:param literal_object_filename:
+:param index_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.dbpedia_preprocess.create_id_pair">
+<code class="descclassname">network_scanner.knowledge_graph.dbpedia_preprocess.</code><code class="descname">create_id_pair</code><span class="sig-paren">(</span><em>**paras</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/dbpedia_preprocess.html#create_id_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.dbpedia_preprocess.create_id_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert to id pair
+:param paras:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.dbpedia_preprocess.extract">
+<code class="descclassname">network_scanner.knowledge_graph.dbpedia_preprocess.</code><code class="descname">extract</code><span class="sig-paren">(</span><em>instance_type_filename</em>, <em>mappingbased_instance_filename</em>, <em>extracted_instance_types_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/dbpedia_preprocess.html#extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.dbpedia_preprocess.extract" title="Permalink to this definition">¶</a></dt>
+<dd><p>从Instance Types中抽取subject也出现在Mappingbased Objects的那些行
+:param instance_type_filename:
+:param mappingbased_instance_filename:
+:param extracted_instance_types_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.dbpedia_preprocess.get_subclass_relation">
+<code class="descclassname">network_scanner.knowledge_graph.dbpedia_preprocess.</code><code class="descname">get_subclass_relation</code><span class="sig-paren">(</span><em>ontology_filename</em>, <em>subclass_relation_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/dbpedia_preprocess.html#get_subclass_relation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.dbpedia_preprocess.get_subclass_relation" title="Permalink to this definition">¶</a></dt>
+<dd><p>get subclass relation pair
+:param ontology_filename:
+:param subclass_relation_filename:
+:return:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-network_scanner.knowledge_graph.kg_util">
+<span id="network-scanner-knowledge-graph-kg-util-module"></span><h2>network_scanner.knowledge_graph.kg_util module<a class="headerlink" href="#module-network_scanner.knowledge_graph.kg_util" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.create_index">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">create_index</code><span class="sig-paren">(</span><em>unique_filename</em>, <em>index_unique_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#create_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.create_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>为unique文件加上index
+:param unique_filename:
+:param index_unique_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.get_difference">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">get_difference</code><span class="sig-paren">(</span><em>filename_one</em>, <em>filename_two</em>, <em>result_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#get_difference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.get_difference" title="Permalink to this definition">¶</a></dt>
+<dd><p>difference between sets
+:param filename_one:
+:param filename_two:
+:param result_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.get_pair">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">get_pair</code><span class="sig-paren">(</span><em>filename</em>, <em>sep</em>, <em>cols</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#get_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.get_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.get_unique">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">get_unique</code><span class="sig-paren">(</span><em>filename</em>, <em>unique_filename</em>, <em>which_col='so'</em>, <em>sep='\t'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#get_unique"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.get_unique" title="Permalink to this definition">¶</a></dt>
+<dd><p>get unique items from triple file.
+:param filename:
+:param unique_filename:
+:param which_col: ‘s’, ‘p’, ‘o’, ‘so’
+:param sep:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.hash_two_column_file">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">hash_two_column_file</code><span class="sig-paren">(</span><em>filename</em>, <em>col</em>, <em>hash_base_filename</em>, <em>num</em>, <em>maxsize</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#hash_two_column_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.hash_two_column_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>将具有两列的文件依据某一列利用hash进行拆分
+:param filename:
+:param col:
+:param hash_base_filename:
+:param num:
+:param maxsize:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.hash_unique_file">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">hash_unique_file</code><span class="sig-paren">(</span><em>unique_filename</em>, <em>num</em>, <em>maxsize</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#hash_unique_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.hash_unique_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>将unique文件利用hash进行拆分
+:param unique_filename: file path
+:param num: partition number
+:param maxsize: maxsize of dict
+:return: None</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.merge_three_file">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">merge_three_file</code><span class="sig-paren">(</span><em>filename_one</em>, <em>filename_two</em>, <em>filename_three</em>, <em>filename_out</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#merge_three_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.merge_three_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>merge three file
+:param filename_one:
+:param filename_two:
+:param filename_out:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.merge_two_file">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">merge_two_file</code><span class="sig-paren">(</span><em>filename_one</em>, <em>filename_two</em>, <em>filename_out</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#merge_two_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.merge_two_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>merge two file
+:param filename_one:
+:param filename_two:
+:param filename_out:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.raw_to_id_pair">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">raw_to_id_pair</code><span class="sig-paren">(</span><em>filename</em>, <em>index_filename</em>, <em>id_pair_filename</em>, <em>cols='two'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#raw_to_id_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.raw_to_id_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>map string pair to id pair.
+:param filename:
+:param index_filename:
+:param id_pair_filename:
+:param cols: indicate the column position of subject and object
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.rm_prefix_predicate">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">rm_prefix_predicate</code><span class="sig-paren">(</span><em>prefix</em>, <em>triple_filename</em>, <em>out_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#rm_prefix_predicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.rm_prefix_predicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>delete common prefix to load all data into memory. only process subject and object.
+:param prefix:
+:param triple_filename:
+:param out_filename: two columns
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.string_pair_to_id_pair">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">string_pair_to_id_pair</code><span class="sig-paren">(</span><em>string_base_filename</em>, <em>index_base_filename</em>, <em>id_base_filename</em>, <em>num</em>, <em>maxsize</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#string_pair_to_id_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.string_pair_to_id_pair" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.kg_util.string_to_id">
+<code class="descclassname">network_scanner.knowledge_graph.kg_util.</code><code class="descname">string_to_id</code><span class="sig-paren">(</span><em>string_filename</em>, <em>index_filename</em>, <em>id_filename</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/kg_util.html#string_to_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.kg_util.string_to_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>将其中一列的字符串转换为索引数字
+:param string_filename:
+:param index_filename:
+:param id_filename:
+:param col:
+:return:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-network_scanner.knowledge_graph.nell_preprocess">
+<span id="network-scanner-knowledge-graph-nell-preprocess-module"></span><h2>network_scanner.knowledge_graph.nell_preprocess module<a class="headerlink" href="#module-network_scanner.knowledge_graph.nell_preprocess" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.nell_preprocess.get_category_instance_triple">
+<code class="descclassname">network_scanner.knowledge_graph.nell_preprocess.</code><code class="descname">get_category_instance_triple</code><span class="sig-paren">(</span><em>triple_filename</em>, <em>category_instance_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/nell_preprocess.html#get_category_instance_triple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.nell_preprocess.get_category_instance_triple" title="Permalink to this definition">¶</a></dt>
+<dd><p>get category instance triple from all tripe file.
+:param triple_filename:
+:param category_instance_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.nell_preprocess.get_relation_instance_triple">
+<code class="descclassname">network_scanner.knowledge_graph.nell_preprocess.</code><code class="descname">get_relation_instance_triple</code><span class="sig-paren">(</span><em>triple_filename</em>, <em>relation_instance_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/nell_preprocess.html#get_relation_instance_triple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.nell_preprocess.get_relation_instance_triple" title="Permalink to this definition">¶</a></dt>
+<dd><p>get relation instance triple from all tripe file.
+:param triple_filename:
+:param relation_instance_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.nell_preprocess.get_triples">
+<code class="descclassname">network_scanner.knowledge_graph.nell_preprocess.</code><code class="descname">get_triples</code><span class="sig-paren">(</span><em>raw_filename</em>, <em>triple_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/nell_preprocess.html#get_triples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.nell_preprocess.get_triples" title="Permalink to this definition">¶</a></dt>
+<dd><p>get triple file from raw data
+:param raw_filename:
+:param triple_filename:
+:return:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-network_scanner.knowledge_graph.probase_preprocess">
+<span id="network-scanner-knowledge-graph-probase-preprocess-module"></span><h2>network_scanner.knowledge_graph.probase_preprocess module<a class="headerlink" href="#module-network_scanner.knowledge_graph.probase_preprocess" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.probase_preprocess.get_instance_concept_pair">
+<code class="descclassname">network_scanner.knowledge_graph.probase_preprocess.</code><code class="descname">get_instance_concept_pair</code><span class="sig-paren">(</span><em>raw_filename</em>, <em>instance_concept_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/probase_preprocess.html#get_instance_concept_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.probase_preprocess.get_instance_concept_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>get instance_concept file from raw data
+:param raw_filename:
+:param instance_concept_filename:
+:return:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-network_scanner.knowledge_graph.yago_preprocess">
+<span id="network-scanner-knowledge-graph-yago-preprocess-module"></span><h2>network_scanner.knowledge_graph.yago_preprocess module<a class="headerlink" href="#module-network_scanner.knowledge_graph.yago_preprocess" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.yago_preprocess.create_all_index">
+<code class="descclassname">network_scanner.knowledge_graph.yago_preprocess.</code><code class="descname">create_all_index</code><span class="sig-paren">(</span><em>classes_filename</em>, <em>instance_filename</em>, <em>literal_filename</em>, <em>index_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/yago_preprocess.html#create_all_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.yago_preprocess.create_all_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>create all index.
+:param classes_filename:
+:param instance_filename:
+:param literal_filename:
+:param index_filename:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.yago_preprocess.create_id_pair">
+<code class="descclassname">network_scanner.knowledge_graph.yago_preprocess.</code><code class="descname">create_id_pair</code><span class="sig-paren">(</span><em>**paras</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/yago_preprocess.html#create_id_pair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.yago_preprocess.create_id_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert to id pair
+:param paras:
+:return:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.knowledge_graph.yago_preprocess.get_triple_file">
+<code class="descclassname">network_scanner.knowledge_graph.yago_preprocess.</code><code class="descname">get_triple_file</code><span class="sig-paren">(</span><em>raw_filename</em>, <em>triple_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/knowledge_graph/yago_preprocess.html#get_triple_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.knowledge_graph.yago_preprocess.get_triple_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>get triple file from raw file
+:param raw_filename:
+:param triple_filename:
+:return:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-network_scanner.knowledge_graph">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-network_scanner.knowledge_graph" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">network_scanner.knowledge_graph package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-network_scanner.knowledge_graph.dbpedia_preprocess">network_scanner.knowledge_graph.dbpedia_preprocess module</a></li>
+<li><a class="reference internal" href="#module-network_scanner.knowledge_graph.kg_util">network_scanner.knowledge_graph.kg_util module</a></li>
+<li><a class="reference internal" href="#module-network_scanner.knowledge_graph.nell_preprocess">network_scanner.knowledge_graph.nell_preprocess module</a></li>
+<li><a class="reference internal" href="#module-network_scanner.knowledge_graph.probase_preprocess">network_scanner.knowledge_graph.probase_preprocess module</a></li>
+<li><a class="reference internal" href="#module-network_scanner.knowledge_graph.yago_preprocess">network_scanner.knowledge_graph.yago_preprocess module</a></li>
+<li><a class="reference internal" href="#module-network_scanner.knowledge_graph">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/network_scanner.knowledge_graph.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/network_scanner.knowledge_graph.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

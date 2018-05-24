@@ -1,0 +1,559 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.networkx_based.networkx_plot &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for network_scanner.networkx_based.networkx_plot</h1><div class="highlight"><pre>
+<span class="c1">#coding=utf-8</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot function</span>
+<span class="sd">        - in-degree distribution</span>
+<span class="sd">        - out-degree distribution</span>
+<span class="sd">        - degree distribution</span>
+<span class="sd">        - in-degree vs out-degree</span>
+<span class="sd">        - clustering coefficient distribution</span>
+<span class="sd">        - cumulative clustering coefficient</span>
+<span class="sd">        - triangle distribution</span>
+<span class="sd">        - assorsativity of degree</span>
+<span class="sd">        - assorsativity of in-degree</span>
+<span class="sd">        - assorsativity of out-degree</span>
+<span class="sd">        - shortest path</span>
+<span class="sd">        - spectral of adjacency matrix</span>
+<span class="sd">        - spectral of laplacian matrix</span>
+<span class="sd">        - average neighbour degree VS degree</span>
+<span class="sd">        - average clustering coefficient VS degree</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_ccd_indeg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get complementary cumulative in-degree distribution &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="c1"># Old solution.</span>
+    <span class="c1"># size = nx.number_of_nodes(graph)</span>
+    <span class="c1"># in_deg_seq = np.array(dict(graph.in_degree()).values())</span>
+    <span class="c1"># in_deg_unique = np.unique(in_deg_seq)</span>
+    <span class="c1"># in_deg_hist = np.array([ele for ele in np.bincount(in_deg_seq) if ele != 0])</span>
+    <span class="c1"># in_deg_cumsum = np.flip(np.cumsum(np.flip(in_deg_hist, 0)) / (size + 0.0), 0)</span>
+
+    <span class="c1"># New solution</span>
+    <span class="n">in_deg_seq</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">d</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">in_degree</span><span class="p">()],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">in_deg_cnt</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">in_deg_seq</span><span class="p">)</span>
+    <span class="c1">#in_deg_unique, in_deg_c =</span>
+    <span class="c1">#in_ccdf = [in_deg_unique, in_deg_cumsum]</span>
+    <span class="c1">#return in_ccdf</span>
+
+
+<div class="viewcode-block" id="plot_in_degree_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_in_degree_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_in_degree_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot cc in-degree distribution &quot;&quot;&quot;</span>
+    <span class="n">in_ccdf</span> <span class="o">=</span> <span class="n">_ccd_indeg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">in_ccdf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">in_ccdf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Indegree distribution&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x&gt;=k)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-indegree distribution.svg&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_ccd_outdeg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get complementary cumulative out-degree distribution &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">out_deg_seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">out_degree</span><span class="p">())</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">out_deg_unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">out_deg_seq</span><span class="p">)</span>
+    <span class="n">out_deg_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ele</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">out_deg_seq</span><span class="p">)</span> <span class="k">if</span> <span class="n">ele</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">out_deg_cumsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">out_deg_hist</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">size</span> <span class="o">+</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">in_ccdf</span> <span class="o">=</span> <span class="p">[</span><span class="n">out_deg_unique</span><span class="p">,</span> <span class="n">out_deg_cumsum</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">in_ccdf</span>
+
+
+<div class="viewcode-block" id="plot_out_degree_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_out_degree_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_out_degree_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot cc out-degree distribution &quot;&quot;&quot;</span>
+    <span class="n">out_ccdf</span> <span class="o">=</span> <span class="n">_ccd_outdeg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">out_ccdf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out_ccdf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Outdegree distribution&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x&gt;=k)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-outdegree distribution.svg&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_ccf</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get complementary cumulative frequency &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">degree_hist</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">degree_histogram</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">degree_hist_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">degree_hist</span><span class="p">)</span>
+    <span class="n">non_zeros</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">degree_hist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">elem</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">non_zeros</span> <span class="o">=</span> <span class="n">non_zeros</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">cc_freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">non_zeros</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">degree_hist_array</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">degree_hist_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cc_freq</span><span class="p">[</span><span class="n">rows</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">degree_hist_array</span><span class="p">[</span><span class="n">i</span><span class="p">:])]</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">cc_freq</span>
+
+
+<div class="viewcode-block" id="plot_degree_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_degree_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_degree_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot ccf degree distribution &quot;&quot;&quot;</span>
+    <span class="n">cc_freq</span> <span class="o">=</span> <span class="n">_ccf</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">cc_freq</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">cc_freq</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Degree distribution&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;complementary cumulative frequency&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="s1">&#39;degree distribution.svg&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<span class="c1"># def degree_dist(filename, model_one_filename, model_two_filename):</span>
+<span class="c1">#     &quot;&quot;&quot; plot ccf degree distribution &quot;&quot;&quot;</span>
+<span class="c1">#     cc_freq = ccf(filename)</span>
+<span class="c1">#     cc_freq_one = ccf(model_one_filename)</span>
+<span class="c1">#     cc_freq_two = ccf(model_two_filename)</span>
+<span class="c1">#     fig = plt.figure()</span>
+<span class="c1">#     ax = fig.add_subplot(1, 1, 1)</span>
+<span class="c1">#     ax.loglog(cc_freq[:, 0], cc_freq[:, 1], &#39;k*&#39;, label=&#39;email&#39;)</span>
+<span class="c1">#     ax.loglog(cc_freq_one[:, 0], cc_freq_one[:, 1], &#39;bo&#39;, label=&#39;NRM&#39;)</span>
+<span class="c1">#     ax.loglog(cc_freq_two[:, 0], cc_freq_two[:, 1], &#39;g1&#39;, label=&#39;FFM&#39;)</span>
+<span class="c1">#     ax.set_title(&#39;Degree distribution&#39;)</span>
+<span class="c1">#     ax.set_xlabel(&#39;k&#39;)</span>
+<span class="c1">#     ax.set_ylabel(&#39;complementary cumulative frequency&#39;)</span>
+<span class="c1">#     ax.legend(loc=&#39;best&#39;)</span>
+<span class="c1">#     plt.savefig(&#39;degree distribution.svg&#39;)</span>
+
+
+<div class="viewcode-block" id="plot_out_in_degree_comparision"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_out_in_degree_comparision">[docs]</a><span class="k">def</span> <span class="nf">plot_out_in_degree_comparision</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot outdegree-indegree comparision &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="n">in_deg_seq</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">in_degree</span><span class="p">())</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">out_deg_seq</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">out_degree</span><span class="p">())</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="c1"># print in_deg_seq</span>
+    <span class="c1"># print out_deg_seq</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">out_deg_seq</span><span class="p">,</span> <span class="n">in_deg_seq</span><span class="p">,</span> <span class="s1">&#39;b.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Outdegree/Indegree comparision&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;outdegree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;indegree&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-outdegree-indegree comparision.svg&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_clustering_cf</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get clustering coefficient of each node &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">clustering_cf</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">clustering_cf_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">clustering_cf</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">clustering_cf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clustering_cf</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="n">sorted_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">clustering_cf_list</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sorted_list</span>
+
+
+<div class="viewcode-block" id="plot_clustering_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_clustering_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_clustering_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; distribution of clustering coefficient of nodes &quot;&quot;&quot;</span>
+    <span class="n">sorted_list</span> <span class="o">=</span> <span class="n">_clustering_cf</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_list</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">sorted_list</span><span class="p">,</span> <span class="s1">&#39;k*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Distribution of clustering coefficient of nodes&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;rank&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;CC&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="s2">&quot;clustering coefficient distribution.svg&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<span class="c1"># def clustering_dist(filename, model_one_filename, model_two_filename):</span>
+<span class="c1">#     &quot;&quot;&quot; distribution of clustering coefficient of nodes &quot;&quot;&quot;</span>
+<span class="c1">#     sorted_list = clustering_cf(filename)</span>
+<span class="c1">#     sorted_list_model_one = clustering_cf(model_one_filename)</span>
+<span class="c1">#     sorted_list_model_two = clustering_cf(model_two_filename)</span>
+<span class="c1">#     fig = plt.figure()</span>
+<span class="c1">#     ax = fig.add_subplot(1, 1, 1)</span>
+<span class="c1">#     ax.loglog(range(1, len(sorted_list) + 1), sorted_list, &#39;k*&#39;, label=&#39;email&#39;)</span>
+<span class="c1">#     ax.loglog(range(1, len(sorted_list_model_one) + 1), sorted_list_model_one, &#39;bo&#39;, label=&#39;NRM&#39;)</span>
+<span class="c1">#     ax.loglog(range(1, len(sorted_list) + 1), sorted_list_model_two, &#39;g1&#39;, label=&#39;FFM&#39;)</span>
+<span class="c1">#     ax.set_title(&#39;Distribution of clustering coefficient of nodes&#39;)</span>
+<span class="c1">#     ax.set_xlabel(&#39;rank&#39;)</span>
+<span class="c1">#     ax.set_ylabel(&#39;CC&#39;)</span>
+<span class="c1">#     ax.legend(loc=&#39;best&#39;)</span>
+<span class="c1">#     plt.savefig(&quot;clustering coefficient distribution.svg&quot;)</span>
+
+
+<div class="viewcode-block" id="plot_cum_clustering_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_cum_clustering_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_cum_clustering_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; cumulative distribution of clustering coefficient of nodes &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">local_cc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">local_cc_seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">local_cc</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">local_cc</span><span class="p">])</span>
+    <span class="n">local_cc_unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">local_cc_seq</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">local_cc_cumsum</span> <span class="o">=</span> <span class="n">local_cc_unique</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">local_cc_unique</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">local_cc_cumsum</span><span class="o">/</span><span class="p">(</span><span class="n">size</span> <span class="o">+</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Distribution of clustering coefficient of nodes&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;local clustering coefficient c&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x &lt;= c)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;-cc-distribution.svg&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_triangles</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get triangles of each node &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">triangles_count</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">triangles</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">triangles_count_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">triangles_count</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">triangles_count_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triangles_count</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="n">sorted_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">triangles_count_list</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sorted_list</span>
+
+
+<div class="viewcode-block" id="plot_triangles_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_triangles_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_triangles_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; distribution of triangles of nodes &quot;&quot;&quot;</span>
+    <span class="n">sorted_list</span> <span class="o">=</span> <span class="n">_triangles</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_list</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">sorted_list</span><span class="p">,</span> <span class="s1">&#39;k*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Distribution of triangles of nodes&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;rank&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Triangles&#39; count&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="s2">&quot;triangles distribution.svg&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="plot_assorsativity"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_assorsativity">[docs]</a><span class="k">def</span> <span class="nf">plot_assorsativity</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot degree assorsativity &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">deg_seq</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">avg_nb_deg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">average_neighbor_degree</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">deg_avg_nb_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">deg_seq</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">avg_nb_deg</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">avg_nb_deg</span><span class="p">])</span>
+    <span class="c1"># print deg_avg_nb_deg[:,1]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">deg_avg_nb_deg</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">deg_avg_nb_deg</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Degreee assortativity&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;degree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average neighbour degree&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-assortativity-plot.svg&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_assorsativity_outdegree"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_assorsativity_outdegree">[docs]</a><span class="k">def</span> <span class="nf">plot_assorsativity_outdegree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot outdegree-outdegree assorsativity &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="n">out_deg_seq</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">out_degree</span><span class="p">()</span>
+    <span class="n">avg_nb_outdeg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">average_neighbor_degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
+    <span class="n">outdeg_avg_nb_outdeg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">out_deg_seq</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">avg_nb_outdeg</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">avg_nb_outdeg</span><span class="p">])</span>
+    <span class="c1"># print deg_avg_nb_deg[:,1]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">outdeg_avg_nb_outdeg</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">outdeg_avg_nb_outdeg</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Outdegreee assortativity&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;outdegree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average neighbour outdegree&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-assortativity-outdegree-plot.svg&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_assorsativity_indegree"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_assorsativity_indegree">[docs]</a><span class="k">def</span> <span class="nf">plot_assorsativity_indegree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot indegree-indegree assorsativity &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="n">in_deg_seq</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">in_degree</span><span class="p">()</span>
+    <span class="n">avg_nb_indeg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">average_neighbor_degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span>
+    <span class="n">indeg_avg_nb_indeg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">in_deg_seq</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">avg_nb_indeg</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">avg_nb_indeg</span><span class="p">])</span>
+    <span class="c1"># print deg_avg_nb_deg[:,1]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">indeg_avg_nb_indeg</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">indeg_avg_nb_indeg</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;g.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;indegreee assortativity&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;indegree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average neighbour indegree&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-assortativity-indegree-plot.svg&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_shortest_path_dist"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_shortest_path_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_shortest_path_dist</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot shortest path distribution &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">subgraph</span> <span class="o">=</span> <span class="n">graph</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nx</span><span class="o">.</span><span class="n">is_connected</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+        <span class="n">lcc_subgraph</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">connected_component_subgraphs</span><span class="p">(</span><span class="n">graph</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
+        <span class="n">subgraph</span> <span class="o">=</span> <span class="n">lcc_subgraph</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">(</span><span class="n">subgraph</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">all_pairs_shortest_path_length</span><span class="p">(</span><span class="n">subgraph</span><span class="p">)</span>
+    <span class="n">all_shortest_paths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">])</span>
+    <span class="n">all_shortest_paths_seq</span> <span class="o">=</span> <span class="n">all_shortest_paths</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">16</span><span class="p">,))</span>
+    <span class="n">path_unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_shortest_paths_seq</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">path_cumsum</span> <span class="o">=</span> <span class="n">path_unique</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">path_unique</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">path_cumsum</span> <span class="o">/</span> <span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">size</span> <span class="o">+</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;shortest path length distribution&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;shortest path length d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x &lt;= d)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-shortest-path.svg&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_spectral_adj"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_spectral_adj">[docs]</a><span class="k">def</span> <span class="nf">plot_spectral_adj</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot spectral distribution of adjacency matrix&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">spectrals</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">adjacency_spectrum</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">spectrals_unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spectrals</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">spectrals_unique</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">spectrals_unique</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;spectral distribution of adjacency matrix&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;eigenvalue&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-spectral-adj.svg&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_spectral_laplacian"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_spectral_laplacian">[docs]</a><span class="k">def</span> <span class="nf">plot_spectral_laplacian</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot spectral distribution of laplacian matrix&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">spectrals</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">laplacian_spectrum</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">spectrals_unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">spectrals</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">spectrals_unique</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">spectrals_unique</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;spectral distribution of laplacian matrix&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;eigenvalue&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;frequency&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-spectral-laplacian.svg&#39;</span><span class="p">)</span></div>
+
+<span class="c1"># def triangles_dist(filename, model_one_filename, model_two_filename):</span>
+<span class="c1">#     &quot;&quot;&quot; distribution of triangles of nodes &quot;&quot;&quot;</span>
+<span class="c1">#     sorted_list = triangles(filename)</span>
+<span class="c1">#     sorted_list_model_one = triangles(model_one_filename)</span>
+<span class="c1">#     sorted_list_model_two = triangles(model_two_filename)</span>
+<span class="c1">#     fig = plt.figure()</span>
+<span class="c1">#     ax = fig.add_subplot(1, 1, 1)</span>
+<span class="c1">#     ax.loglog(range(1, len(sorted_list) + 1), sorted_list, &#39;k*&#39;, label=&#39;email&#39;)</span>
+<span class="c1">#     ax.loglog(range(1, len(sorted_list_model_one) + 1), sorted_list_model_one, &#39;bo&#39;, label=&#39;NRM&#39;)</span>
+<span class="c1">#     ax.loglog(range(1, len(sorted_list) + 1), sorted_list_model_two, &#39;g1&#39;, label=&#39;FFM&#39;)</span>
+<span class="c1">#     ax.set_title(&#39;Distribution of triangles of nodes&#39;)</span>
+<span class="c1">#     ax.set_xlabel(&#39;rank&#39;)</span>
+<span class="c1">#     ax.set_ylabel(&quot;Triangles&#39; count&quot;)</span>
+<span class="c1">#     ax.legend(loc=&#39;best&#39;)</span>
+<span class="c1">#     plt.savefig(&quot;triangles distribution.svg&quot;)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_total_neighb_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get the sum of neighbour degrees of certain node&quot;&quot;&quot;</span>
+    <span class="n">neighbour_nodes</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">all_neighbors</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">neighbour_nodes</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">+</span> <span class="n">nx</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">ele</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_get_neighb_deg_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get average neighbour degree VS degree &quot;&quot;&quot;</span>
+    <span class="n">degree_neighbour_degree</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">degree_count</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="c1"># First calculate the sum of neighbour degrees and frequency of each degree</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+        <span class="c1"># print(nx.degree(graph, node))</span>
+        <span class="n">total_neighb_deg</span> <span class="o">=</span> <span class="n">_get_total_neighb_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">deg</span> <span class="ow">in</span> <span class="n">degree_neighbour_degree</span><span class="p">:</span>
+            <span class="n">degree_neighbour_degree</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">degree_neighbour_degree</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">+</span> <span class="n">total_neighb_deg</span>
+            <span class="n">degree_count</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">degree_count</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">degree_neighbour_degree</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_neighb_deg</span>
+            <span class="n">degree_count</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># Then calculate average neighbour degree</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">degree_neighbour_degree</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">degree_neighbour_degree</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">degree_neighbour_degree</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">key</span> <span class="o">*</span> <span class="n">degree_count</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="c1"># print(key, degree_neighbour_degree[key])</span>
+    <span class="c1"># Sort dict by keys and return tuple</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">degree_neighbour_degree</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ele</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ele</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="plot_neighb_degree_degree"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_neighb_degree_degree">[docs]</a><span class="k">def</span> <span class="nf">plot_neighb_degree_degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot average neighbour degree vs degree &quot;&quot;&quot;</span>
+    <span class="c1"># how to calculate?</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_get_neighb_deg_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;average neighbour degree VS degree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;degree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average neighbour degree&#39;</span><span class="p">)</span>
+    <span class="c1"># ax.set_ylim(0, 40)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-neighb_deg_deg.svg&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_cls_coeff_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; get clustering coefficient VS degree&quot;&quot;&quot;</span>
+    <span class="n">clustering_degree</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">deg_cnt</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="c1"># First calculate clustering coefficient of each node and degree frequency</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="n">cls_coeff</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">deg</span> <span class="ow">in</span> <span class="n">clustering_degree</span><span class="p">:</span>
+            <span class="n">clustering_degree</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">clustering_degree</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">+</span> <span class="n">cls_coeff</span>
+            <span class="n">deg_cnt</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">deg_cnt</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clustering_degree</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls_coeff</span>
+            <span class="n">deg_cnt</span><span class="p">[</span><span class="n">deg</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1"># Then calculate average clustering coefficient for certain degree</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">clustering_degree</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">clustering_degree</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">clustering_degree</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">/</span> <span class="n">deg_cnt</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="c1"># Sort dict by keys</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">clustering_degree</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ele</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ele</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="plot_cls_coeff_deg"><a class="viewcode-back" href="../../../network_scanner.networkx_based.html#network_scanner.networkx_based.networkx_plot.plot_cls_coeff_deg">[docs]</a><span class="k">def</span> <span class="nf">plot_cls_coeff_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; plot average clustering coefficient VS degree &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">graph</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">create_using</span><span class="o">=</span><span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">())</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_get_cls_coeff_deg</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;average clustering coefficient VS degree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;degree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average clustering coefficient&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-cls_coeff_deg.svg&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># prepare data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;../input/en-yagoFacts-d-r-id-pair.txt&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;en-yagoFacts-d-r-id-pair&quot;</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s2">&quot;output/yago/&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outpath</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+
+    <span class="c1"># read data</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">read_edgelist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+    <span class="n">paras</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;graph&quot;</span><span class="p">:</span> <span class="n">graph</span><span class="p">,</span> <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s2">&quot;outpath&quot;</span><span class="p">:</span> <span class="n">outpath</span><span class="p">}</span>
+    <span class="c1"># plot_in_degree_dist(**paras) BUG</span>
+    <span class="c1"># plot_assorsativity_indegree(**paras) OK</span>
+    <span class="c1"># plot_assorsativity_outdegree(**paras) OK</span>
+    <span class="c1"># plot_out_in_degree_comparision(**paras) OK</span>
+    <span class="c1"># plot_assorsativity(**paras) OK</span>
+    <span class="c1"># plot_cls_coeff_deg(**paras) Time</span>
+    <span class="c1"># plot_neighb_degree_degree(**paras) Time</span>
+    <span class="n">plot_spectral_adj</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="n">plot_spectral_laplacian</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="n">plot_triangles_dist</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="n">plot_clustering_dist</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="n">plot_shortest_path_dist</span><span class="p">(</span><span class="o">**</span><span class="n">paras</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

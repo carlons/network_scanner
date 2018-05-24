@@ -1,0 +1,496 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>network_scanner.networkit_based.networkit_plot &#8212; network_scanner 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for network_scanner.networkit_based.networkit_plot</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">networkit</span>
+<span class="kn">from</span> <span class="nn">networkit</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">networkit_based.networkit_util</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot function</span>
+<span class="sd">        - (in/out) degree distribution</span>
+<span class="sd">        - cumulative (in/out) degree distribution</span>
+<span class="sd">        - in-degree vs out-degree</span>
+<span class="sd">        - cumulative clustering coefficient</span>
+<span class="sd">        - assorsativity of degree</span>
+<span class="sd">        - (@_@)... clustering coefficient VS degree</span>
+<span class="sd">        - (@_@)... triangle distribution</span>
+<span class="sd">        - shortest path</span>
+<span class="sd">        - (@_@)... spectral of adjacency matrix</span>
+<span class="sd">        - (@_@)... spectral of laplacian matrix</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="plot_degree_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_degree_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_degree_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot degree distribution</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: unique degree list</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span><span class="p">,</span> <span class="s1">&#39;b*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Degree distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(x=k)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-degree-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">unique_deg</span></div>
+
+
+<div class="viewcode-block" id="plot_indeg_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_indeg_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_indeg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot in-degree distribution</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: unique in-degree list</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span><span class="p">,</span> <span class="s1">&#39;g*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;In-Degree distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(x=k)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-indegree-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">unique_deg</span></div>
+
+
+<div class="viewcode-block" id="plot_outdeg_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_outdeg_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_outdeg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot out-degree distribution</span>
+<span class="sd">        </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: unique out-degree list</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span><span class="p">,</span> <span class="s1">&#39;r*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Out-Degree distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(x=k)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-outdegree-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">unique_deg</span></div>
+
+
+<div class="viewcode-block" id="plot_ccum_degree_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_ccum_degree_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_ccum_degree_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot complementary cumulative degree distribution</span>
+<span class="sd">        </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: figure</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_cc_deg_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">degree_type</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;In&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="s1">&#39;Out&#39;</span><span class="p">}</span>
+    <span class="n">outfile_name</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;cc&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;cc-in&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="s1">&#39;cc-out&#39;</span><span class="p">}</span>
+    <span class="n">marker_color</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">}</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">unique_deg</span><span class="p">,</span> <span class="n">unique_cnt</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">marker_color</span><span class="p">[</span><span class="n">degree_type</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Complementary Cumulative &#39; + title[degree_type] + &#39;-Degree distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(x&gt;=k)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">outfile_name</span><span class="p">[</span><span class="n">degree_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-degree-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="plot_out_in_degree_comparision"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_out_in_degree_comparision">[docs]</a><span class="k">def</span> <span class="nf">plot_out_in_degree_comparision</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot outdegree-indegree comparision</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zipped_seq</span> <span class="o">=</span> <span class="p">[(</span><span class="n">net</span><span class="o">.</span><span class="n">degreeOut</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="n">net</span><span class="o">.</span><span class="n">degreeIn</span><span class="p">(</span><span class="n">node</span><span class="p">))</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">nodes</span><span class="p">()]</span>
+    <span class="n">out_deg_seq</span><span class="p">,</span> <span class="n">in_deg_seq</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">zipped_seq</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">out_deg_seq</span><span class="p">,</span> <span class="n">in_deg_seq</span><span class="p">,</span> <span class="s1">&#39;b.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Outdegree/Indegree comparision&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;outdegree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;indegree&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-outdegree-indegree-comparision.eps&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_cum_clustering_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_cum_clustering_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_cum_clustering_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cumulative distribution of clustering coefficient of nodes.</span>
+<span class="sd">    </span>
+<span class="sd">    ONLY for Undirected graph</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">removeSelfLoops</span><span class="p">()</span>
+    <span class="n">local_cc</span> <span class="o">=</span> <span class="n">networkit</span><span class="o">.</span><span class="n">centrality</span><span class="o">.</span><span class="n">LocalClusteringCoefficient</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">turbo</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">local_cc</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">unique_cc</span><span class="p">,</span> <span class="n">unique_cc_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">local_cc</span><span class="o">.</span><span class="n">scores</span><span class="p">(),</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">unique_cc_cumcnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">unique_cc_cnt</span><span class="p">)</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="n">unique_cc_cnt</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unique_cc</span><span class="p">,</span> <span class="n">unique_cc_cumcnt</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Cumulative distribution of clustering coefficient of nodes&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;local clustering coefficient c&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x &lt;= c)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;-cc-distribution.eps&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_assorsativity"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_assorsativity">[docs]</a><span class="k">def</span> <span class="nf">plot_assorsativity</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">degree_type</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot degree assorsativity</span>
+<span class="sd">    </span>
+<span class="sd">    ONLY support Undirected graph for now.</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">deg_seq</span><span class="p">,</span> <span class="n">nbdeg_seq</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_deg_nbdeg</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">degree_type</span><span class="p">)</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;In-&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="s1">&#39;Out-&#39;</span><span class="p">}</span>
+    <span class="n">outfile_name</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;assorsativity&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;assorsativity-in&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="s1">&#39;assorsativity-out&#39;</span><span class="p">}</span>
+    <span class="n">marker_color</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="s1">&#39;r&#39;</span><span class="p">}</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">deg_seq</span><span class="p">,</span> <span class="n">nbdeg_seq</span><span class="p">,</span> <span class="n">marker_color</span><span class="p">[</span><span class="n">degree_type</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(title[degree_type] + &#39;Degreee assortativity&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">degree_type</span> <span class="o">+</span> <span class="s1">&#39;-degree&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;average neighbour &#39;</span> <span class="o">+</span> <span class="n">degree_type</span> <span class="o">+</span> <span class="s1">&#39;-degree&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">outfile_name</span><span class="p">[</span><span class="n">degree_type</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-assortativity-plot.eps&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_connected_component_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_connected_component_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_connected_component_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot connected components of undirected graph</span>
+<span class="sd">        </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: connected component size distribution</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_connected_components</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">cc_size</span><span class="p">,</span> <span class="n">cc_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">cc_size</span><span class="p">,</span> <span class="n">cc_cnt</span><span class="p">,</span> <span class="s1">&#39;r*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Connected components distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-connected-component-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cc</span></div>
+
+
+<div class="viewcode-block" id="plot_wcc_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_wcc_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_wcc_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot weakly connected components of directed graph</span>
+<span class="sd">        </span>
+<span class="sd">    :param net: networkit graph object</span>
+<span class="sd">    </span>
+<span class="sd">    :param label: network label</span>
+<span class="sd">    </span>
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: weakly connected component size distribution</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">wcc</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_wcc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">wcc_size</span><span class="p">,</span> <span class="n">wcc_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">wcc</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">wcc_size</span><span class="p">,</span> <span class="n">wcc_cnt</span><span class="p">,</span> <span class="s1">&#39;b*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Weakly connected components distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-wcc-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">wcc</span></div>
+
+
+<div class="viewcode-block" id="plot_scc_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_scc_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_scc_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot strongly connected components of directed graph</span>
+
+<span class="sd">    :param net: networkit graph object</span>
+
+<span class="sd">    :param label: network label</span>
+
+<span class="sd">    :param outpath: figure output directory</span>
+
+<span class="sd">    :return: strongly connected component size distribution</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">scc</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_scc</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">scc_size</span><span class="p">,</span> <span class="n">scc_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">scc</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">scc_size</span><span class="p">,</span> <span class="n">scc_cnt</span><span class="p">,</span> <span class="s1">&#39;g*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Strongly connected components distribution&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-scc-distribution.eps&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">scc</span></div>
+
+
+<div class="viewcode-block" id="plot_betweeness"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_betweeness">[docs]</a><span class="k">def</span> <span class="nf">plot_betweeness</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot cumulative betweenss centrality</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+
+<span class="sd">    :param label: network label</span>
+
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">betweeness_values</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_betweeness</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+    <span class="n">unique_value</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">betweeness_values</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">unique_cumcnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unique_value</span><span class="p">,</span> <span class="n">unique_cumcnt</span><span class="p">,</span> <span class="s1">&#39;b.&#39;</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Cumulative distribution of betweeness centrality of nodes&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;betweeness centrality b&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x &lt;= b)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;-betweeness-distribution.eps&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_eigenvector_centrality"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_eigenvector_centrality">[docs]</a><span class="k">def</span> <span class="nf">plot_eigenvector_centrality</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot cumulative eigenvector centrality</span>
+
+<span class="sd">    :param net: networkit graph object</span>
+
+<span class="sd">    :param label: network label</span>
+
+<span class="sd">    :param outpath: figure output directory</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">eigenvector_centrality_values</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_eigenvector_centrality</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+    <span class="n">unique_value</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">eigenvector_centrality_values</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">unique_cumcnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unique_value</span><span class="p">,</span> <span class="n">unique_cumcnt</span><span class="p">,</span> <span class="s1">&#39;g.&#39;</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Cumulative distribution of eigenvector centrality of nodes&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;eigenvector centrality e&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x &lt;= e)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;-eigenvector-distribution.eps&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_pagerank"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_pagerank">[docs]</a><span class="k">def</span> <span class="nf">plot_pagerank</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot cumulative pagerank centrality</span>
+
+<span class="sd">    :param net: networkit graph object</span>
+
+<span class="sd">    :param label: network label</span>
+
+<span class="sd">    :param outpath: figure output directory</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">pagerank_values</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_pagerank</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+    <span class="n">unique_value</span><span class="p">,</span> <span class="n">unique_cnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">pagerank_values</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">unique_cumcnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unique_cnt</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">unique_value</span><span class="p">,</span> <span class="n">unique_cumcnt</span><span class="p">,</span> <span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    <span class="c1"># ax.set_title(&#39;Cumulative distribution of pagerank of nodes&#39;)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;pagerank value v&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x &lt;= v)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;-pagerank-distribution.eps&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_hop_dist"><a class="viewcode-back" href="../../../network_scanner.networkit_based.html#network_scanner.networkit_based.networkit_plot.plot_hop_dist">[docs]</a><span class="k">def</span> <span class="nf">plot_hop_dist</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot hop distribution.only support connected graph</span>
+<span class="sd">    </span>
+<span class="sd">    :param net: networkit graph object</span>
+
+<span class="sd">    :param label: network label</span>
+
+<span class="sd">    :param outpath: figure output directory</span>
+<span class="sd">    </span>
+<span class="sd">    :return: None</span>
+<span class="sd">   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dist</span><span class="p">,</span> <span class="n">proportion</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_hop_distr</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">proportion</span><span class="p">,</span> <span class="s1">&#39;g*&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;distance d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;p(x&lt;=d)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-hop.eps&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># filepath = &quot;../input/cit-HepTh&quot;</span>
+    <span class="c1"># label = &quot;cit-Hepth&quot;</span>
+    <span class="c1"># outpath = &#39;./output/&#39; + label + &#39;/&#39;</span>
+    <span class="c1"># net = graphio.readGraph(filepath, Format.EdgeList, separator=&#39; &#39;, firstNode=0, continuous=False, directed=True)</span>
+    <span class="c1"># paras = {&#39;net&#39;: net, &#39;label&#39;: label, &#39;outpath&#39;: outpath}</span>
+    <span class="c1"># plot_degree_dist(**paras)</span>
+    <span class="c1"># plot_indeg_dist(**paras)</span>
+    <span class="c1"># plot_outdeg_dist(**paras)</span>
+
+    <span class="c1"># degree_type = &#39;out&#39;</span>
+    <span class="c1"># paras = {&#39;net&#39;: net, &#39;label&#39;: label, &#39;outpath&#39;: outpath, &#39;degree_type&#39;: degree_type}</span>
+    <span class="c1"># plot_ccum_degree_dist(**paras)</span>
+
+    <span class="c1"># plot_out_in_degree_comparision(**paras)</span>
+    <span class="c1"># net = graphio.readGraph(filepath, Format.EdgeList, separator=&#39; &#39;, firstNode=0, continuous=False, directed=False)</span>
+    <span class="c1"># paras = {&#39;net&#39;: net, &#39;label&#39;: label, &#39;outpath&#39;: outpath}</span>
+    <span class="c1"># plot_cum_clustering_dist(**paras)</span>
+
+    <span class="c1"># degree_type = &#39;all&#39;</span>
+    <span class="c1"># paras = {&#39;net&#39;: net.toUndirected(), &#39;label&#39;: label, &#39;outpath&#39;: outpath, &#39;degree_type&#39;: degree_type}</span>
+    <span class="c1"># plot_assorsativity(**paras)</span>
+
+    <span class="c1"># plot_wcc_dist(**paras)</span>
+    <span class="c1"># plot_scc_dist(**paras)</span>
+
+    <span class="c1"># plot_betweeness(**paras)</span>
+    <span class="c1"># plot_eigenvector_centrality(**paras)</span>
+    <span class="c1"># plot_pagerank(**paras)</span>
+
+    <span class="n">filepath</span> <span class="o">=</span> <span class="s2">&quot;/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/NELL/nell-all-id-pair&quot;</span>
+    <span class="n">net</span> <span class="o">=</span> <span class="n">graphio</span><span class="o">.</span><span class="n">readGraph</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">Format</span><span class="o">.</span><span class="n">EdgeList</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">firstNode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">subgraph</span> <span class="o">=</span> <span class="n">networkit_based</span><span class="o">.</span><span class="n">networkit_util</span><span class="o">.</span><span class="n">get_lcc_subgraph</span><span class="p">(</span><span class="n">net</span><span class="p">)</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;test-hopplot&#39;</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s1">&#39;./output/&#39;</span>
+    <span class="n">plot_hop_dist</span><span class="p">(</span><span class="n">subgraph</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Xikun Huang.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
