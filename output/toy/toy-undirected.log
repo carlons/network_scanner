@@ -1,0 +1,46 @@
+2018-05-28 22:36:30,489 - INFO - read graph from file
+2018-05-28 22:36:30,489 - INFO - get undirected map node id...
+2018-05-28 22:36:30,489 - INFO - ******************************************
+2018-05-28 22:36:30,490 - INFO - Undirected graph
+2018-05-28 22:36:30,490 - INFO - number of nodes: 8
+2018-05-28 22:36:30,490 - INFO - number of edges: 5
+2018-05-28 22:36:31,586 - INFO - 
+
+2018-05-28 22:36:31,586 - INFO - write degree to file...
+2018-05-28 22:36:31,586 - INFO - start to plot degree distribution...
+2018-05-28 22:36:31,705 - INFO - min degree: 1
+2018-05-28 22:36:31,705 - INFO - max degree: 2
+2018-05-28 22:36:31,705 - INFO - average degree: 1.25
+2018-05-28 22:36:31,705 - INFO - 
+
+2018-05-28 22:36:31,705 - INFO - start to plot complementary cumulative (in/out) degree distribution...
+2018-05-28 22:36:31,896 - INFO - 
+
+2018-05-28 22:36:31,904 - INFO - clustering coefficient: 0.0
+2018-05-28 22:36:31,904 - INFO - 
+2018-05-28 22:36:31,904 - INFO - plot cumulative distribution of local clustering coefficient...
+2018-05-28 22:36:32,002 - INFO - 
+
+2018-05-28 22:36:32,002 - INFO - plot connected components...
+2018-05-28 22:36:32,171 - INFO - number of connected components: 3
+2018-05-28 22:36:32,171 - INFO - largest connected component size: 4
+2018-05-28 22:36:32,172 - INFO - lcc nodes percentage: 0.5
+2018-05-28 22:36:32,172 - INFO - lcc edges percentage: 0.6
+2018-05-28 22:36:32,172 - INFO - 
+
+2018-05-28 22:36:32,172 - INFO - calculating eigenvector centrality...
+2018-05-28 22:36:32,448 - INFO - 
+
+2018-05-28 22:36:32,448 - INFO - calculating diameter...
+2018-05-28 22:36:32,448 - INFO - diameter: (3, 0)
+2018-05-28 22:36:32,448 - INFO - 
+
+2018-05-28 22:36:32,448 - INFO - calculating effective diameter...
+2018-05-28 22:36:32,449 - INFO - effective diameter: 2.5
+2018-05-28 22:36:32,449 - INFO - calculating assorsativity...
+2018-05-28 22:36:32,450 - INFO - assorsativity: 0.1666666666666666
+2018-05-28 22:36:32,450 - INFO - plot assorsativity...
+2018-05-28 22:36:32,625 - INFO - 
+
+2018-05-28 22:36:32,625 - INFO - ******************************************
+2018-05-28 22:36:32,625 - INFO - done ^-^
