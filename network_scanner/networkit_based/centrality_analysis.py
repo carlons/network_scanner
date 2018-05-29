@@ -2,10 +2,11 @@ import numpy as np
 import scipy
 import matplotlib
 import mpmath
+import os
 import powerlaw
 from matplotlib import pyplot as plt
 import logging
-import networkit_based.networkit_util
+import network_scanner.networkit_based.networkit_util as networkit_util
 
 
 def get_top_k_id(centrality_filename, map_filename, k):
@@ -22,7 +23,7 @@ def get_top_k_id(centrality_filename, map_filename, k):
     
     """
     centrality_file = open(centrality_filename, 'r')
-    id_map = networkit_based.networkit_util.get_falseid_trueid_map(map_filename)
+    id_map = networkit_util.get_falseid_trueid_map(map_filename)
     top_k_id = []
     cnt = 0
     while True:
@@ -86,21 +87,32 @@ def get_centrality_seq(centrality_filename):
     return val
 
 
-def power_law_analysis(centrality_filename, label, outpath):
+def power_law_analysis(centrality_filename, centrality_name, label, outpath):
     """
     analysis power law
     
     :param centrality_filename: centrality filename
-    
+
+    :param centrality_name: centrality name
+
     :param label: network label
     
     :param outpath: output directory
     
-    :param degree_type: all, in, out
-      
     :return: None
     
     """
+    # check whether the output directory exists
+    if not os.path.exists(outpath):
+        os.mkdir(outpath)
+    # set logging
+    # I guess there exists conflict. So add code below.
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    log_filepath = outpath + label + label + '_' + centrality_name + '_powerlaw.log'
+    logging.basicConfig(filename=log_filepath, format='%(asctime)s - %(levelname)s - %('
+                                                      'message)s', level=logging.INFO)
+
     data = get_centrality_seq(centrality_filename)
     fit = powerlaw.Fit(data, discrete=False)
     logging.info('power law fit result:')

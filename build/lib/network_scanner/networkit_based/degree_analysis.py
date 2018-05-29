@@ -2,9 +2,11 @@ import numpy as np
 import scipy
 import matplotlib
 import mpmath
+import os
 import powerlaw
 from matplotlib import pyplot as plt
 import logging
+import network_scanner.networkit_based.networkit_util as networkit_util
 
 
 def get_deg_seq(net, label, outpath, degree_type):
@@ -53,6 +55,17 @@ def power_law_analysis(filename, label, outpath, degree_type):
     :return: None
     
     """
+    # check whether the output directory exists
+    if not os.path.exists(outpath):
+        os.mkdir(outpath)
+    # set logging
+    # I guess there exists conflict. So add code below.
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    log_filepath = outpath + label + label + '_' + degree_type + '_powerlaw.log'
+    logging.basicConfig(filename=log_filepath, format='%(asctime)s - %(levelname)s - %('
+                                                      'message)s', level=logging.INFO)
+
     data = np.genfromtxt(filename)
     fit = powerlaw.Fit(data, discrete=True)
     logging.info('power law fit result:')
@@ -107,6 +120,180 @@ def power_law_analysis(filename, label, outpath, degree_type):
 
     figname = outpath + label + '-powerlaw'
     plt.savefig(figname + '.eps', bbox_inches='tight')
+
+
+def get_falseid_value_map(false_id_value_filename):
+    """
+    get falseid_value_map from file
+
+    :param false_id_value_filename: the first column is false id, the second column is value
+
+    :return: dict
+
+    """
+    false_id_value_file = open(false_id_value_filename, 'r')
+    false_id_value_map = dict()
+    while True:
+        line = false_id_value_file.readline()
+        if not line:
+            break
+        split_line = line.strip().split(sep='\t')
+        false_id_value_map[split_line[0]] = split_line[1]
+    false_id_value_file.close()
+    return false_id_value_map
+
+
+def get_falseid_name_map(map_filename, index_filename):
+    """
+    get falseid-name map. key is falseid, and value is name.
+
+    :param map_filename: map file name
+
+    :param index_filename: index file name
+
+    :return: dict
+
+    """
+    map_file = open(map_filename, 'r')
+    falseid_trueid_map = dict()
+    while True:
+        line = map_file.readline()
+        if not line:
+            break
+        split_line = line.strip().split(sep='\t')
+        falseid_trueid_map[split_line[1]] = split_line[0]
+    map_file.close()
+    index_file = open(index_filename, 'r')
+    trueid_name_map = dict()
+    while True:
+        line = index_file.readline()
+        if not line:
+            break
+        split_line = line.strip().split(sep='\t')
+        trueid_name_map[split_line[0]] = split_line[1]
+    index_file.close()
+    falseid_name_map = dict()
+    for falseid in falseid_trueid_map.keys():
+        if falseid_trueid_map[falseid] in trueid_name_map:
+            falseid_name_map[falseid] = trueid_name_map[falseid_trueid_map[falseid]]
+        else:
+            print(falseid_trueid_map[falseid])
+    return falseid_name_map
+
+
+def get_top_k_trueid_and_name(false_id_value_filename, map_filename, index_filename, result_filename, k):
+    """
+    get top k value and name.
+
+    :param false_id_value_filename: false_id_value filename
+
+    :param map_filename: map file name
+
+    :param index_filename: index file name
+
+    :param result_filename: result filename
+
+    :param k: k
+
+    :return: None
+
+    """
+    false_id_value_map = get_falseid_value_map(false_id_value_filename)
+    sorted_false_id_value_pair = sorted(false_id_value_map.items(), key=lambda ele: int(ele[1]), reverse=True)
+    top_k_falseid, top_k_value = zip(*sorted_false_id_value_pair[0:k])
+    top_k_trueid = networkit_util.falseid_to_trueid(top_k_falseid, map_filename)
+    top_k_name = networkit_util.trueid_to_name(top_k_trueid, index_filename)
+    result_file = open(result_filename, 'w')
+    for i in range(len(top_k_name)):
+        result_file.write(str(top_k_value[i]) + '\t' + str(top_k_name[i]) + '\n')
+    result_file.close()
+
+
+def get_top_in_out_degree_cmp(indeg_falseid_value_filename, outdeg_falseid_value_filename, map_filename,
+                              index_filename, result_filename):
+    """
+    analysis indegree vs outdegree
+
+    :param indeg_falseid_value_filename: indeg_falseid_value filename
+
+    :param outdeg_falseid_value_filename: outdeg_falseid_value filename
+
+    :param map_filename: map filename
+
+    :param index_filename: index filename
+
+    :param result_filename: result filename
+
+    :return: None
+
+    """
+    indeg_falseid_value_map = get_falseid_value_map(indeg_falseid_value_filename)
+    outdeg_falseid_value_map = get_falseid_value_map(outdeg_falseid_value_filename)
+    in_close_out = []
+    in_larger_out = []
+    out_larger_in = []
+    for false_id in indeg_falseid_value_map.keys():
+        in_minus_out = int(indeg_falseid_value_map[false_id]) - int(outdeg_falseid_value_map[false_id])
+        out_minus_in = int(outdeg_falseid_value_map[false_id]) - int(indeg_falseid_value_map[false_id])
+        if in_minus_out < 10 and out_minus_in < 10:
+            in_close_out.append((false_id, abs(in_minus_out), int(indeg_falseid_value_map[false_id]), int(outdeg_falseid_value_map[false_id])))
+        if in_minus_out > 0:
+            in_larger_out.append((false_id, in_minus_out, int(indeg_falseid_value_map[false_id]), int(outdeg_falseid_value_map[false_id])))
+        if out_minus_in > 0:
+            out_larger_in.append((false_id, out_minus_in, int(indeg_falseid_value_map[false_id]), int(outdeg_falseid_value_map[false_id])))
+    sorted_in_close_out = sorted(in_close_out, key=lambda ele: int(ele[2]), reverse=True)[0:100]
+    sorted_in_larger_out = sorted(in_larger_out, key=lambda ele: int(ele[1]), reverse=True)[0:100]
+    sorted_out_larger_in = sorted(out_larger_in, key=lambda ele: int(ele[1]), reverse=True)[0:100]
+    # print(sorted_in_close_out[0:10])
+    # print(sorted_in_larger_out[0:10])
+    # print(sorted_out_larger_in[0:10])
+    in_close_out = []
+    in_larger_out = []
+    out_larger_in = []
+    falseid_name_map = get_falseid_name_map(map_filename, index_filename)
+    for ele in sorted_in_close_out:
+        if ele[0] in falseid_name_map.keys():
+            in_close_out.append((falseid_name_map[ele[0]], ele[1], ele[2], ele[3]))
+        else:
+            print(ele[0])
+    for ele in sorted_in_larger_out:
+        if ele[0] in falseid_name_map.keys():
+            in_larger_out.append((falseid_name_map[ele[0]], ele[1], ele[2], ele[3]))
+        else:
+            print(ele[0])
+    for ele in sorted_out_larger_in:
+        if ele[0] in falseid_name_map.keys():
+            out_larger_in.append((falseid_name_map[ele[0]], ele[1], ele[2], ele[3]))
+        else:
+            print(ele[0])
+    result_file = open(result_filename, 'w')
+    result_file.write("format(name, result, indegree, outdegree) \n")
+    result_file.write("Indegree is close to outdegree(<10): \n")
+    result_file.write('\n')
+    for ele in in_close_out:
+        result_file.write(str(ele))
+        result_file.write('\n')
+    result_file.write('\n')
+    result_file.write('*' * 40 + '\n')
+    result_file.write('*' * 40 + '\n')
+    result_file.write('*' * 40 + '\n')
+    result_file.write('\n')
+    result_file.write("Indegree is larger than outdegree: \n")
+    result_file.write('\n')
+    for ele in in_larger_out:
+        result_file.write(str(ele))
+        result_file.write('\n')
+    result_file.write('\n')
+    result_file.write('*' * 40 + '\n')
+    result_file.write('*' * 40 + '\n')
+    result_file.write('*' * 40 + '\n')
+    result_file.write('\n')
+    result_file.write("Outdegree is larger than indegree: \n")
+    result_file.write('\n')
+    for ele in out_larger_in:
+        result_file.write(str(ele))
+        result_file.write('\n')
+    result_file.close()
 
 
 if __name__ == '__main__':

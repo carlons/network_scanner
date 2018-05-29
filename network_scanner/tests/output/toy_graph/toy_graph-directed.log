@@ -1,0 +1,41 @@
+2018-05-24 22:52:19,849 - INFO - get directed map node id...
+2018-05-24 22:52:19,849 - INFO - Directed graph
+2018-05-24 22:52:19,849 - INFO - number of nodes: 14
+2018-05-24 22:52:19,849 - INFO - number of edges: 12
+2018-05-24 22:52:22,181 - INFO - 
+
+2018-05-24 22:52:22,181 - INFO - start to plot in-degree distribution...
+2018-05-24 22:52:22,602 - INFO - min in-degree: 0
+2018-05-24 22:52:22,603 - INFO - max in-degree: 2
+2018-05-24 22:52:22,603 - INFO - 
+
+2018-05-24 22:52:22,603 - INFO - start to plot out-degree distribution...
+2018-05-24 22:52:23,071 - INFO - min out-degree: 0
+2018-05-24 22:52:23,071 - INFO - max out-degree: 4
+2018-05-24 22:52:23,071 - INFO - 
+
+2018-05-24 22:52:23,071 - INFO - start to plot complementary cumulative (in/out) degree distribution...
+2018-05-24 22:52:23,944 - INFO - 
+
+2018-05-24 22:52:23,944 - INFO - plot outdegree vs indegree...
+2018-05-24 22:52:24,311 - INFO - 
+
+2018-05-24 22:52:24,311 - INFO - calculating reciprocity...
+2018-05-24 22:52:24,311 - INFO - reciprocity: 0.0
+2018-05-24 22:52:24,311 - INFO - 
+
+2018-05-24 22:52:24,311 - INFO - plot wcc distribution...
+2018-05-24 22:52:24,817 - INFO - number of weakly connected components: 3
+2018-05-24 22:52:24,817 - INFO - largest weakly connected component size: 9
+2018-05-24 22:52:24,817 - INFO - 
+2018-05-24 22:52:24,817 - INFO - plot scc distribution...
+2018-05-24 22:52:25,184 - INFO - number of strongly connected components: 14
+2018-05-24 22:52:25,184 - INFO - largest strongly connected component size: 1
+2018-05-24 22:52:25,185 - INFO - lcc nodes percentage: 0.07142857142857142
+2018-05-24 22:52:25,185 - INFO - lcc edges percentage: 0.0
+2018-05-24 22:52:25,185 - INFO - 
+
+2018-05-24 22:52:25,185 - INFO - calculating pagerank...
+2018-05-24 22:52:25,417 - INFO - 
+
+2018-05-24 22:52:25,417 - INFO - done ^-^

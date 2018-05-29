@@ -5,4 +5,3 @@ network_scanner
    :maxdepth: 4
 
    network_scanner
-   setup

@@ -47,6 +47,8 @@ def analysis_undirected(net, label, outpath):
     logging.info('\n')
 
     # 度分布
+    logging.info('write degree to file...')
+    networkit_util.get_and_write_deg_dist(net, label, outpath, degree_type='all')
     logging.info('start to plot degree distribution...')
     uniqe_deg_seq = networkit_plot.plot_degree_dist(net, label, outpath)
     logging.info('min degree: {0}'.format(min(uniqe_deg_seq)))
@@ -83,14 +85,14 @@ def analysis_undirected(net, label, outpath):
     logging.info('lcc edges percentage: {0}'.format(lcc_subgraph.numberOfEdges() / net.numberOfEdges()))
     logging.info('\n')
 
-    # 介数. time-consuming
-    # logging.info('calculating betweeness...')
-    # networkit_plot.plot_betweeness(net, label, outpath)
-    # logging.info('\n')
-
     # eigenvector centrality
     logging.info('calculating eigenvector centrality...')
     networkit_plot.plot_eigenvector_centrality(net, label, outpath)
+    centrality_name = 'eigenvector-centrality'
+    centrality_filename = outpath + label + '-' + centrality_name + '-falseid-value'
+    paras = {'centrality_filename': centrality_filename, 'label': label, 'outpath': outpath,
+             'centrality_name': centrality_name}
+    networkit_plot.plot_ccum_centrality_dist(**paras)
     logging.info('\n')
 
     # 距离, 只支持无向图. 有效直径只支持无向连通图.
@@ -170,6 +172,8 @@ def analysis_directed(net, label, outpath):
     logging.info('\n')
 
     # 入度分布
+    logging.info('write indegree to file...')
+    networkit_util.get_and_write_deg_dist(net, label, outpath, degree_type='in')
     logging.info('start to plot in-degree distribution...')
     uniqe_deg_seq = networkit_plot.plot_indeg_dist(net, label, outpath)
     logging.info('min in-degree: {0}'.format(min(uniqe_deg_seq)))
@@ -177,6 +181,8 @@ def analysis_directed(net, label, outpath):
     logging.info('\n')
 
     # 出度分布
+    logging.info('write outdegree to file...')
+    networkit_util.get_and_write_deg_dist(net, label, outpath, degree_type='out')
     logging.info('start to plot out-degree distribution...')
     uniqe_deg_seq = networkit_plot.plot_outdeg_dist(net, label, outpath)
     logging.info('min out-degree: {0}'.format(min(uniqe_deg_seq)))
@@ -223,6 +229,11 @@ def analysis_directed(net, label, outpath):
     # Pagerank
     logging.info('calculating pagerank...')
     networkit_plot.plot_pagerank(net, label, outpath)
+    centrality_name = 'pagerank'
+    centrality_filename = outpath + label + '-' + centrality_name + '-falseid-value'
+    paras = {'centrality_filename': centrality_filename, 'label': label, 'outpath': outpath,
+             'centrality_name': centrality_name}
+    networkit_plot.plot_ccum_centrality_dist(**paras)
     logging.info('\n')
 
 

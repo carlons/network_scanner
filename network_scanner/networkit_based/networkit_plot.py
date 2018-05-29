@@ -40,7 +40,7 @@ def plot_degree_dist(net, label, outpath):
     # ax.set_title('Degree distribution')
     ax.set_xlabel('k')
     ax.set_ylabel('P(x=k)')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-degree-distribution.eps')
     return unique_deg
 
@@ -65,7 +65,7 @@ def plot_indeg_dist(net, label, outpath):
     # ax.set_title('In-Degree distribution')
     ax.set_xlabel('k')
     ax.set_ylabel('P(x=k)')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-indegree-distribution.eps')
     return unique_deg
 
@@ -90,7 +90,7 @@ def plot_outdeg_dist(net, label, outpath):
     # ax.set_title('Out-Degree distribution')
     ax.set_xlabel('k')
     ax.set_ylabel('P(x=k)')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-outdegree-distribution.eps')
     return unique_deg
 
@@ -118,7 +118,7 @@ def plot_ccum_degree_dist(net, label, outpath, degree_type='all'):
     # ax.set_title('Complementary Cumulative ' + title[degree_type] + '-Degree distribution')
     ax.set_xlabel('k')
     ax.set_ylabel('P(x>=k)')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-' + outfile_name[degree_type] + '-degree-distribution.eps')
     return ax
 
@@ -226,7 +226,7 @@ def plot_connected_component_dist(net, label, outpath):
     # ax.set_title('Connected components distribution')
     ax.set_xlabel('size')
     ax.set_ylabel('count')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-connected-component-distribution.eps')
     return cc
 
@@ -252,7 +252,7 @@ def plot_wcc_dist(net, label, outpath):
     # ax.set_title('Weakly connected components distribution')
     ax.set_xlabel('size')
     ax.set_ylabel('count')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-wcc-distribution.eps')
     return wcc
 
@@ -278,7 +278,7 @@ def plot_scc_dist(net, label, outpath):
     # ax.set_title('Strongly connected components distribution')
     ax.set_xlabel('size')
     ax.set_ylabel('count')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-scc-distribution.eps')
     return scc
 
@@ -357,6 +357,30 @@ def plot_pagerank(net, label, outpath):
     plt.savefig(outpath + label + "-pagerank-distribution.eps")
 
 
+def plot_ccum_centrality_dist(centrality_filename, label, outpath, centrality_name):
+    """
+    plot complementary cumulative centrality distribution
+
+    :param centrality_filename: centrality filename
+
+    :param label: label
+
+    :param outpath: result path
+
+    :return: figure
+
+    """
+    unique_val, unique_cc_prob = networkit_util.get_cc_centrality_distr(centrality_filename)
+    centrality_style = {'eigenvector-centrality': 'c*', 'pagerank': 'g*', 'hub': 'r*', 'authority': 'm*', 'betweeness': 'b*'}
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.loglog(unique_val, unique_cc_prob, centrality_style[centrality_name], label=label + '-' + centrality_name)
+    ax.set_xlabel('v')
+    ax.set_ylabel('P(x>=v)')
+    plt.savefig(outpath + label + '-' + centrality_name + '-distribution.eps')
+    return ax
+
+
 def plot_hop_dist(net, label, outpath):
     """
     plot hop distribution.only support connected graph
@@ -376,7 +400,7 @@ def plot_hop_dist(net, label, outpath):
     ax.plot(dist, proportion, 'g*', label=label)
     ax.set_xlabel('distance d')
     ax.set_ylabel('p(x<=d)')
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
     plt.savefig(outpath + label + '-hop.eps')
 
 

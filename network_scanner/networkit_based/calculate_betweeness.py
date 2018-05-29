@@ -1,17 +1,14 @@
 import matplotlib
 matplotlib.use('Agg')
-import sys
-sys.path.append('../')
 import logging
 import networkit
 from networkit import *
 import os
-import numpy as np
-import networkit_based.networkit_plot
-import networkit_based.networkit_util
+import network_scanner.networkit_based.networkit_util as networkit_util
+import network_scanner.networkit_based.networkit_plot as networkit_plot
 
 
-def betweeness(net, label, outpath):
+def get_betweeness(net, label, outpath):
     """
     analysis undirected network
     
@@ -24,6 +21,18 @@ def betweeness(net, label, outpath):
     :return: None
     
     """
+    # check whether the output directory exists
+    if not os.path.exists(outpath):
+        os.mkdir(outpath)
+
+    # set logging
+    # I guess there exists conflict. So add code below.
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+    log_filepath = outpath + label + label + '_betweeness.log'
+    logging.basicConfig(filename=log_filepath, format='%(asctime)s - %(levelname)s - %('
+                                                      'message)s', level=logging.INFO)
+
     # check whether the graph is undirected
     is_directed = net.isDirected()
     if is_directed:
@@ -37,8 +46,13 @@ def betweeness(net, label, outpath):
 
     # time-consuming
     logging.info('calculating betweeness...')
-    networkit_based.networkit_plot.plot_betweeness(net, label, outpath)
-    logging.info('\n')
+    networkit_plot.plot_betweeness(net, label, outpath)
+    centrality_name = 'betweeness'
+    centrality_filename = outpath + label + '-' + centrality_name + '-falseid-value'
+    paras = {'centrality_filename': centrality_filename, 'label': label, 'outpath': outpath,
+             'centrality_name': centrality_name}
+    networkit_plot.plot_ccum_centrality_dist(**paras)
+    logging.info('done')
 
 
 def main():
@@ -69,7 +83,7 @@ def main():
     net = net_reader.read(filepath)
     # net = graphio.readGraph(filepath, Format.EdgeList, separator='\t', firstNode=0, continuous=False, directed=False)
     paras = {'net': net, 'label': label, 'outpath': outpath}
-    networkit_based.networkit_util.write_map_node_id(net_reader, label, outpath)
+    networkit_util.write_map_node_id(net_reader, label, outpath)
     logging.info('write map node id to file...')
     betweeness(**paras)
     logging.info('******************************************')

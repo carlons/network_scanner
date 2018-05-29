@@ -38,8 +38,8 @@
 <div class="section" id="module-network_scanner.networkit_based.calculate_betweeness">
 <span id="network-scanner-networkit-based-calculate-betweeness-module"></span><h2>network_scanner.networkit_based.calculate_betweeness module<a class="headerlink" href="#module-network_scanner.networkit_based.calculate_betweeness" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="network_scanner.networkit_based.calculate_betweeness.betweeness">
-<code class="descclassname">network_scanner.networkit_based.calculate_betweeness.</code><code class="descname">betweeness</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/calculate_betweeness.html#betweeness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.calculate_betweeness.betweeness" title="Permalink to this definition">¶</a></dt>
+<dt id="network_scanner.networkit_based.calculate_betweeness.get_betweeness">
+<code class="descclassname">network_scanner.networkit_based.calculate_betweeness.</code><code class="descname">get_betweeness</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/calculate_betweeness.html#get_betweeness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.calculate_betweeness.get_betweeness" title="Permalink to this definition">¶</a></dt>
 <dd><p>analysis undirected network</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -137,7 +137,7 @@
 
 <dl class="function">
 <dt id="network_scanner.networkit_based.centrality_analysis.power_law_analysis">
-<code class="descclassname">network_scanner.networkit_based.centrality_analysis.</code><code class="descname">power_law_analysis</code><span class="sig-paren">(</span><em>centrality_filename</em>, <em>label</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/centrality_analysis.html#power_law_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.centrality_analysis.power_law_analysis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">network_scanner.networkit_based.centrality_analysis.</code><code class="descname">power_law_analysis</code><span class="sig-paren">(</span><em>centrality_filename</em>, <em>centrality_name</em>, <em>label</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/centrality_analysis.html#power_law_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.centrality_analysis.power_law_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>analysis power law</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -145,9 +145,9 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>centrality_filename</strong> – centrality filename</li>
+<li><strong>centrality_name</strong> – centrality name</li>
 <li><strong>label</strong> – network label</li>
 <li><strong>outpath</strong> – output directory</li>
-<li><strong>degree_type</strong> – all, in, out</li>
 </ul>
 </td>
 </tr>
@@ -185,6 +185,91 @@
 </dd></dl>
 
 <dl class="function">
+<dt id="network_scanner.networkit_based.degree_analysis.get_falseid_name_map">
+<code class="descclassname">network_scanner.networkit_based.degree_analysis.</code><code class="descname">get_falseid_name_map</code><span class="sig-paren">(</span><em>map_filename</em>, <em>index_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/degree_analysis.html#get_falseid_name_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.degree_analysis.get_falseid_name_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>get falseid-name map. key is falseid, and value is name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>map_filename</strong> – map file name</li>
+<li><strong>index_filename</strong> – index file name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.degree_analysis.get_falseid_value_map">
+<code class="descclassname">network_scanner.networkit_based.degree_analysis.</code><code class="descname">get_falseid_value_map</code><span class="sig-paren">(</span><em>false_id_value_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/degree_analysis.html#get_falseid_value_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.degree_analysis.get_falseid_value_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>get falseid_value_map from file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>false_id_value_filename</strong> – the first column is false id, the second column is value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.degree_analysis.get_top_in_out_degree_cmp">
+<code class="descclassname">network_scanner.networkit_based.degree_analysis.</code><code class="descname">get_top_in_out_degree_cmp</code><span class="sig-paren">(</span><em>indeg_falseid_value_filename</em>, <em>outdeg_falseid_value_filename</em>, <em>map_filename</em>, <em>index_filename</em>, <em>result_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/degree_analysis.html#get_top_in_out_degree_cmp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.degree_analysis.get_top_in_out_degree_cmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>analysis indegree vs outdegree</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>indeg_falseid_value_filename</strong> – indeg_falseid_value filename</li>
+<li><strong>outdeg_falseid_value_filename</strong> – outdeg_falseid_value filename</li>
+<li><strong>map_filename</strong> – map filename</li>
+<li><strong>index_filename</strong> – index filename</li>
+<li><strong>result_filename</strong> – result filename</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.degree_analysis.get_top_k_trueid_and_name">
+<code class="descclassname">network_scanner.networkit_based.degree_analysis.</code><code class="descname">get_top_k_trueid_and_name</code><span class="sig-paren">(</span><em>false_id_value_filename</em>, <em>map_filename</em>, <em>index_filename</em>, <em>result_filename</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/degree_analysis.html#get_top_k_trueid_and_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.degree_analysis.get_top_k_trueid_and_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>get top k value and name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>false_id_value_filename</strong> – false_id_value filename</li>
+<li><strong>map_filename</strong> – map file name</li>
+<li><strong>index_filename</strong> – index file name</li>
+<li><strong>result_filename</strong> – result filename</li>
+<li><strong>k</strong> – k</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="network_scanner.networkit_based.degree_analysis.power_law_analysis">
 <code class="descclassname">network_scanner.networkit_based.degree_analysis.</code><code class="descname">power_law_analysis</code><span class="sig-paren">(</span><em>filename</em>, <em>label</em>, <em>outpath</em>, <em>degree_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/degree_analysis.html#power_law_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.degree_analysis.power_law_analysis" title="Permalink to this definition">¶</a></dt>
 <dd><p>analysis power law</p>
@@ -211,6 +296,29 @@
 <div class="section" id="module-network_scanner.networkit_based.distance_analysis">
 <span id="network-scanner-networkit-based-distance-analysis-module"></span><h2>network_scanner.networkit_based.distance_analysis module<a class="headerlink" href="#module-network_scanner.networkit_based.distance_analysis" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="network_scanner.networkit_based.distance_analysis.estimate_average_shortest_path">
+<code class="descclassname">network_scanner.networkit_based.distance_analysis.</code><code class="descname">estimate_average_shortest_path</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em>, <em>sample_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/distance_analysis.html#estimate_average_shortest_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.distance_analysis.estimate_average_shortest_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>estimate average shortest path length</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – net</li>
+<li><strong>label</strong> – label</li>
+<li><strong>outpath</strong> – result path</li>
+<li><strong>sample_num</strong> – sample number. the larger the sample_num is, the slower the program is.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="network_scanner.networkit_based.distance_analysis.main">
 <code class="descclassname">network_scanner.networkit_based.distance_analysis.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/distance_analysis.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.distance_analysis.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>plot hop distribution and estimate average shortest path length</p>
@@ -224,9 +332,44 @@
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="network_scanner.networkit_based.distance_analysis.plot_hop_dist">
+<code class="descclassname">network_scanner.networkit_based.distance_analysis.</code><code class="descname">plot_hop_dist</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/distance_analysis.html#plot_hop_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.distance_analysis.plot_hop_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot hop distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>net</strong> – net</li>
+<li><strong>label</strong> – label</li>
+<li><strong>outpath</strong> – result path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-network_scanner.networkit_based.networkit_analysis">
 <span id="network-scanner-networkit-based-networkit-analysis-module"></span><h2>network_scanner.networkit_based.networkit_analysis module<a class="headerlink" href="#module-network_scanner.networkit_based.networkit_analysis" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="network_scanner.networkit_based.networkit_analysis.analysis">
+<code class="descclassname">network_scanner.networkit_based.networkit_analysis.</code><code class="descname">analysis</code><span class="sig-paren">(</span><em>filepath</em>, <em>label</em>, <em>outpath</em>, <em>directed=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_analysis.html#analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_analysis.analysis" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="function">
 <dt id="network_scanner.networkit_based.networkit_analysis.analysis_directed">
 <code class="descclassname">network_scanner.networkit_based.networkit_analysis.</code><code class="descname">analysis_directed</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_analysis.html#analysis_directed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_analysis.analysis_directed" title="Permalink to this definition">¶</a></dt>
@@ -327,6 +470,28 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.networkit_plot.plot_ccum_centrality_dist">
+<code class="descclassname">network_scanner.networkit_based.networkit_plot.</code><code class="descname">plot_ccum_centrality_dist</code><span class="sig-paren">(</span><em>centrality_filename</em>, <em>label</em>, <em>outpath</em>, <em>centrality_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_plot.html#plot_ccum_centrality_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_plot.plot_ccum_centrality_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot complementary cumulative centrality distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>centrality_filename</strong> – centrality filename</li>
+<li><strong>label</strong> – label</li>
+<li><strong>outpath</strong> – result path</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">figure</p>
 </td>
 </tr>
 </tbody>
@@ -602,6 +767,27 @@
 <div class="section" id="module-network_scanner.networkit_based.networkit_util">
 <span id="network-scanner-networkit-based-networkit-util-module"></span><h2>network_scanner.networkit_based.networkit_util module<a class="headerlink" href="#module-network_scanner.networkit_based.networkit_util" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="network_scanner.networkit_based.networkit_util.falseid_to_trueid">
+<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">falseid_to_trueid</code><span class="sig-paren">(</span><em>false_id_list</em>, <em>map_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#falseid_to_trueid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.falseid_to_trueid" title="Permalink to this definition">¶</a></dt>
+<dd><p>transfer id to name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>false_id_list</strong> – false id list</li>
+<li><strong>map_filename</strong> – map filename. In this map file, the first column is true id and the second column is false id.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">true id list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="network_scanner.networkit_based.networkit_util.get_algebraic_connectivity">
 <code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">get_algebraic_connectivity</code><span class="sig-paren">(</span><em>net</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#get_algebraic_connectivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.get_algebraic_connectivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>get algebraic connectivity. time consuming.</p>
@@ -615,6 +801,17 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.networkit_util.get_and_write_deg_dist">
+<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">get_and_write_deg_dist</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em>, <em>degree_type='all'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#get_and_write_deg_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.get_and_write_deg_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>get (in/out)degree distribution
+:param net: networkit graph
+:param label
+:param outpath
+:param degree_type: ‘all’ ‘in’ ‘out’
+:return: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique">https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique</a></p>
 </dd></dl>
 
 <dl class="function">
@@ -644,7 +841,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>connected_net</strong> – connected graph</li>
-<li><strong>sample</strong> – sample size. the larger the number is,  the slower the program is.</li>
+<li><strong>sample_num</strong> – sample size. the larger the number is,  the slower the program is.</li>
 </ul>
 </td>
 </tr>
@@ -672,6 +869,22 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">node id and betweeness centrality value</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.networkit_util.get_cc_centrality_distr">
+<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">get_cc_centrality_distr</code><span class="sig-paren">(</span><em>centrality_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#get_cc_centrality_distr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.get_cc_centrality_distr" title="Permalink to this definition">¶</a></dt>
+<dd><p>get complementary cumulative centrality distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>centrality_filename</strong> – centrality filename</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">unique value and ccdf</td>
 </tr>
 </tbody>
 </table>
@@ -716,11 +929,9 @@
 
 <dl class="function">
 <dt id="network_scanner.networkit_based.networkit_util.get_deg_dist">
-<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">get_deg_dist</code><span class="sig-paren">(</span><em>net</em>, <em>label</em>, <em>outpath</em>, <em>degree_type='all'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#get_deg_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.get_deg_dist" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">get_deg_dist</code><span class="sig-paren">(</span><em>net</em>, <em>degree_type='all'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#get_deg_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.get_deg_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>get (in/out)degree distribution
 :param net: networkit graph
-:param label
-:param outpath
 :param degree_type: ‘all’ ‘in’ ‘out’
 :return: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique">https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique</a></p>
 </dd></dl>
@@ -919,6 +1130,48 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>net</strong> – networkit graph object</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">weakly connected component distribution</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.networkit_util.readnetwork">
+<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">readnetwork</code><span class="sig-paren">(</span><em>filepath</em>, <em>directed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#readnetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.readnetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>read network from edgelist file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filepath</strong> – edgelist file</li>
+<li><strong>directed</strong> – boolean, treat the network as directed or not</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="network_scanner.networkit_based.networkit_util.trueid_to_name">
+<code class="descclassname">network_scanner.networkit_based.networkit_util.</code><code class="descname">trueid_to_name</code><span class="sig-paren">(</span><em>id_list</em>, <em>index_filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/network_scanner/networkit_based/networkit_util.html#trueid_to_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#network_scanner.networkit_based.networkit_util.trueid_to_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>transfer id to name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id_list</strong> – true id list</li>
+<li><strong>index_filename</strong> – index filename</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">name list</p>
+</td>
 </tr>
 </tbody>
 </table>

@@ -11,6 +11,7 @@ Subpackages
     network_scanner.networkit_based
     network_scanner.networkx_based
     network_scanner.snap_based
+    network_scanner.tests
 
 Module contents
 ---------------

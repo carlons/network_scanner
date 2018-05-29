@@ -7,6 +7,22 @@ import scipy.stats
 import random
 
 
+def readnetwork(filepath, directed):
+    """
+    read network from edgelist file
+
+    :param filepath: edgelist file
+
+    :param directed: boolean, treat the network as directed or not
+
+    :return:
+
+    """
+    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=directed)
+    net = net_reader.read(filepath)
+    return net
+
+
 def get_deg_dist(net, degree_type='all'):
     """
     get (in/out)degree distribution
@@ -334,6 +350,32 @@ def get_pagerank(net, label, outpath):
     return nodes_id, pagerank_values
 
 
+def get_cc_centrality_distr(centrality_filename):
+    """
+    get complementary cumulative centrality distribution
+
+    :param centrality_filename: centrality filename
+
+    :return: unique value and ccdf
+
+    """
+    centrality_file = open(centrality_filename, 'r')
+    val = []
+    while True:
+        line = centrality_file.readline()
+        if not line:
+            break
+        splited_line = line.strip().split('\t')
+        val.append(float(splited_line[1]))
+    centrality_file.close()
+    unique_val, unique_cnt = np.unique(val, return_counts=True)
+    tmp_sum = sum(unique_cnt)
+    # unique_cc_cnt = [sum(unique_cnt[i:]) / tmp_sum for i in range(len(unique_cnt))]
+    unique_cc_cnt = tmp_sum - np.cumsum(unique_cnt) + unique_cnt
+    unique_cc_prob = unique_cc_cnt / tmp_sum
+    return unique_val, unique_cc_prob
+
+
 def get_hop_distr(net, label, outpath):
     """
     get hop distribution
@@ -467,7 +509,7 @@ def get_average_shortest_path_appro(connected_net, sample_num):
     
     :param connected_net: connected graph
     
-    :param sample: sample size. the larger the number is,  the slower the program is.
+    :param sample_num: sample size. the larger the number is,  the slower the program is.
     
     :return: approximately average shortest path
     
@@ -485,6 +527,60 @@ def get_average_shortest_path_appro(connected_net, sample_num):
             sampled_path_length = sampled_path_length + bfs.distance(target)
     result = sampled_path_length / (len(sample) * len(nodes))
     return result
+
+
+def falseid_to_trueid(false_id_list, map_filename):
+    """
+    transfer id to name
+
+    :param false_id_list: false id list
+
+    :param map_filename: map filename. In this map file, the first column is true id and the second column is false id.
+
+    :return: true id list
+
+    """
+    map_file = open(map_filename, 'r')
+    id_name_map = dict()
+    while True:
+        line = map_file.readline()
+        if not line:
+            break
+        splited_line = line.strip().split('\t')
+        id_name_map[splited_line[1]] = splited_line[0]
+    map_file.close()
+    trueid_list = []
+    for id in false_id_list:
+        trueid = id_name_map.get(id)
+        trueid_list.append(trueid)
+    return trueid_list
+
+
+def trueid_to_name(id_list, index_filename):
+    """
+    transfer id to name
+
+    :param id_list: true id list
+
+    :param index_filename: index filename
+
+    :return: name list
+
+    """
+    index_file = open(index_filename, 'r')
+    id_name_map = dict()
+    while True:
+        line = index_file.readline()
+        if not line:
+            break
+        splited_line = line.strip().split('\t')
+        id_name_map[splited_line[0]] = splited_line[1]
+    index_file.close()
+    name_list = []
+    for id in id_list:
+        name = id_name_map.get(id)
+        name_list.append(name)
+    return name_list
 
 
 if __name__ == '__main__':
@@ -509,10 +605,10 @@ if __name__ == '__main__':
     net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=False)
     net = net_reader.read(filepath)
     write_map_node_id(net_reader, label, outpath + 'undirected-')
-    get_deg_dist(net, label, outpath, degree_type='all')
+    get_and_write_deg_dist(net, label, outpath, degree_type='all')
 
     net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=True)
     net = net_reader.read(filepath)
     write_map_node_id(net_reader, label, outpath + 'directed-')
-    get_deg_dist(net, label, outpath, degree_type='in')
-    get_deg_dist(net, label, outpath, degree_type='out')
+    get_and_write_deg_dist(net, label, outpath, degree_type='in')
+    get_and_write_deg_dist(net, label, outpath, degree_type='out')
