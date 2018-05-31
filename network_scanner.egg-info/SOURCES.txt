@@ -8,6 +8,7 @@ network_scanner.egg-info/top_level.txt
 network_scanner/example/__init__.py
 network_scanner/example/dbpedia_all_analysis.py
 network_scanner/example/dbpedia_data_analysis.py
+network_scanner/example/example.py
 network_scanner/example/nell_analysis.py
 network_scanner/example/probase_analysis.py
 network_scanner/example/test.py
