@@ -328,4 +328,26 @@ def main():
 
 if __name__ == '__main__':
     # main()
-    print('hello')
+    # print('hello')
+    # parameters
+    filepath = '/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/NELL/nell-all-id-pair'
+    label = "nell-all-id-pair"
+    outpath = './output/' + label + '/'
+
+    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=False)
+    net = net_reader.read(filepath)
+    networkit_plot.plot_cum_clustering_dist(net, label, outpath)
+
+    lcc_subgraph = networkit_util.get_lcc_subgraph(net)
+    networkit_plot.plot_hop_dist(lcc_subgraph, label, outpath)
+
+    centrality_style = ['eigenvector-centrality', 'pagerank']
+    eigenvector_filename = outpath + label + '-' + 'eigen_vector_centr'
+    networkit_plot.plot_ccum_centrality_dist(eigenvector_filename, label, outpath, centrality_style[0])
+    pagerank_filename = outpath + label + '-' + 'pagerank'
+    networkit_plot.plot_ccum_centrality_dist(pagerank_filename, label, outpath, centrality_style[1])
+
+    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=True)
+    net = net_reader.read(filepath)
+    networkit_plot.plot_wcc_dist(net, label, outpath)
+    networkit_plot.plot_scc_dist(net, label, outpath)

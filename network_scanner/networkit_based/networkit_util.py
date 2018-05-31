@@ -26,8 +26,11 @@ def readnetwork(filepath, directed):
 def get_deg_dist(net, degree_type='all'):
     """
     get (in/out)degree distribution
+
     :param net: networkit graph
+
     :param degree_type: 'all' 'in' 'out'
+
     :return: https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique
 
     """
@@ -48,10 +51,15 @@ def get_deg_dist(net, degree_type='all'):
 def get_and_write_deg_dist(net, label, outpath, degree_type='all'):
     """
     get (in/out)degree distribution
+
     :param net: networkit graph
+
     :param label
+
     :param outpath
+
     :param degree_type: 'all' 'in' 'out'
+
     :return: https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html#numpy.unique
 
     """
