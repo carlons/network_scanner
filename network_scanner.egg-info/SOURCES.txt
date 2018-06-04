@@ -19,6 +19,7 @@ network_scanner/knowledge_graph/dbpedia_preprocess.py
 network_scanner/knowledge_graph/kg_util.py
 network_scanner/knowledge_graph/nell_preprocess.py
 network_scanner/knowledge_graph/probase_preprocess.py
+network_scanner/knowledge_graph/xlore_preprocess.py
 network_scanner/knowledge_graph/yago_preprocess.py
 network_scanner/networkit_based/__init__.py
 network_scanner/networkit_based/calculate_betweeness.py
