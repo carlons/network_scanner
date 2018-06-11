@@ -130,13 +130,18 @@ Now we can scan this network.
     asp = networkit_util.get_average_shortest_path_appro(lcc_subgraph, sample_num=sample_num)
     logging.info('estimated average shortest path: {0}'.format(asp))
     ```
-#### 4. calculate betweeness centrality
+#### 4. calculate exact clustering coefficient
+  ```
+    net = networkit_util.readnetwork(filepath, directed=False)
+    calculate_clustering_coefficient.get_exact_clustering_coefficient(net, label, outpath)
+  ```
+#### 5. calculate betweeness centrality
   ```
     net = networkit_util.readnetwork(filepath, directed=False)
     calculate_betweeness.get_betweeness(net, label, outpath)
   ```
 
-#### 5. centrality analysis
+#### 6. centrality analysis
   ```
     pagerank_filename = outpath + 'toy-pagerank-falseid-value'
     map_filename = outpath + 'directed-toy-map-node-ids'
