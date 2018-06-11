@@ -116,14 +116,27 @@ Now we can scan this network.
               'index_filename': index_filename, 'result_filename': result_filename}
     degree_analysis.get_top_in_out_degree_cmp(**paras)
   ```
-
-#### 3. calculate betweeness centrality
+#### 3. distance analysis
+    ```
+    net = networkit_util.readnetwork(filepath, directed=False)
+    lcc_subgraph = networkit_util.get_lcc_subgraph(net)
+    logging.info('plot hop...')
+    paras = dict(net=lcc_subgraph, label=label, outpath=outpath)
+    networkit_plot.plot_hop_dist(**paras)
+    logging.info('')
+    logging.info('estimate average shortest path')
+    sample_num = 100
+    logging.info('sample size: {0}'.format(sample_num))
+    asp = networkit_util.get_average_shortest_path_appro(lcc_subgraph, sample_num=sample_num)
+    logging.info('estimated average shortest path: {0}'.format(asp))
+    ```
+#### 4. calculate betweeness centrality
   ```
     net = networkit_util.readnetwork(filepath, directed=False)
     calculate_betweeness.get_betweeness(net, label, outpath)
   ```
 
-#### 4. centrality analysis
+#### 5. centrality analysis
   ```
     pagerank_filename = outpath + 'toy-pagerank-falseid-value'
     map_filename = outpath + 'directed-toy-map-node-ids'

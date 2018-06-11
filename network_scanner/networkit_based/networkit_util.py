@@ -589,34 +589,3 @@ def trueid_to_name(id_list, index_filename):
         name = id_name_map.get(id)
         name_list.append(name)
     return name_list
-
-
-if __name__ == '__main__':
-    filepath = '/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/YAGO3/facts-id-pair'
-    label = "facts-id-pair"
-    outpath = './output/' + label + '/'
-    # net = graphio.readGraph(filepath, Format.EdgeList, separator='\t', firstNode=0, continuous=False, directed=False)
-    # get_deg_dist(net)
-    # get_cc_deg_dist(net, degree_type='all')
-    # shortest_distances =distance.APSP(net)
-    # shortest_distances.run()
-    # shortest_distances.getDistances()
-    # print(shortest_distances)
-
-    # filepath = "./input/NELL/nell-all-id-pair"
-    # net = graphio.readGraph(filepath, Format.EdgeList, separator='\t', firstNode=0, continuous=False, directed=False)
-    # subgraph = get_lcc_subgraph(net)
-    # avg_shortest_path = get_average_shortest_path_appro(subgraph, 1)
-    # print(avg_shortest_path)
-
-    # write degree to file
-    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=False)
-    net = net_reader.read(filepath)
-    write_map_node_id(net_reader, label, outpath + 'undirected-')
-    get_and_write_deg_dist(net, label, outpath, degree_type='all')
-
-    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=True)
-    net = net_reader.read(filepath)
-    write_map_node_id(net_reader, label, outpath + 'directed-')
-    get_and_write_deg_dist(net, label, outpath, degree_type='in')
-    get_and_write_deg_dist(net, label, outpath, degree_type='out')

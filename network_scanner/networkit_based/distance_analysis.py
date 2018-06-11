@@ -78,8 +78,8 @@ def main():
     :return: None 
     
     """
-    filepath = '/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/DBpedia/mappingbased_id_pair'
-    label = "mappingbased_id_pair"
+    filepath = ''
+    label = ''
     outpath = './output/' + label + '/'
 
     # check whether the output directory exists

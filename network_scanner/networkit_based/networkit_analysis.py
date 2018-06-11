@@ -59,16 +59,17 @@ def analysis_undirected(net, label, outpath):
     # 补累积度分布
     logging.info('start to plot complementary cumulative (in/out) degree distribution...')
     networkit_plot.plot_ccum_degree_dist(net, label, outpath, degree_type='all')
-    logging.info('\n')
+    logging.info('plot cc degree distribution done.\n')
 
     # 聚类系数
     # global clustering coefficient. The first definition in http://konect.uni-koblenz.de/statistics/clusco
-    global_cc = globals.ClusteringCoefficient.exactGlobal(net)
-    logging.info('clustering coefficient: {0}'.format(global_cc))
+    logging.info('calculating clustering coefficient...')
+    global_cc = globals.ClusteringCoefficient.approxGlobal(net, nodes)
+    logging.info('approximate clustering coefficient: {0}'.format(global_cc))
     logging.info('')
     logging.info('plot cumulative distribution of local clustering coefficient...')
-    networkit_plot.plot_cum_clustering_dist(net, label, outpath)
-    logging.info('\n')
+    networkit_plot.plot_cum_clustering_dist(net, label, outpath, turbo=True)
+    logging.info('plot local clustering coefficient done.\n')
     # The second definition in http://konect.uni-koblenz.de/statistics/clusco.
     # cc = globals.clustering(net, error=0.01)
     # print("clustering coefficient ", cc)
@@ -83,7 +84,7 @@ def analysis_undirected(net, label, outpath):
     lcc_subgraph = networkit_util.get_lcc_subgraph(net)
     logging.info('lcc nodes percentage: {0}'.format(lcc_subgraph.numberOfNodes() / net.numberOfNodes()))
     logging.info('lcc edges percentage: {0}'.format(lcc_subgraph.numberOfEdges() / net.numberOfEdges()))
-    logging.info('\n')
+    logging.info('components done.\n')
 
     # eigenvector centrality
     logging.info('calculating eigenvector centrality...')
@@ -93,7 +94,7 @@ def analysis_undirected(net, label, outpath):
     paras = {'centrality_filename': centrality_filename, 'label': label, 'outpath': outpath,
              'centrality_name': centrality_name}
     networkit_plot.plot_ccum_centrality_dist(**paras)
-    logging.info('\n')
+    logging.info('eigenvector centrality done.\n')
 
     # 距离, 只支持无向图. 有效直径只支持无向连通图.
     # distance
@@ -107,6 +108,7 @@ def analysis_undirected(net, label, outpath):
     eff_diameter = distance.EffectiveDiameterApproximation(lcc_subgraph, ratio=0.9)
     eff_diameter.run()
     logging.info('effective diameter: {0}'.format(eff_diameter.getEffectiveDiameter()))
+    logging.info('distance done.\n')
 
     # 依据度的同配混合
     logging.info('calculating assorsativity...')
@@ -114,26 +116,7 @@ def analysis_undirected(net, label, outpath):
     logging.info('assorsativity: {0}'.format(assorsativity))
     logging.info('plot assorsativity...')
     networkit_plot.plot_assorsativity(net, label, outpath, degree_type='all')
-    logging.info('\n')
-
-    # closeness
-    # support directed or undirected network. Notice that the input graph has to be connected
-    # closeness = centrality.ApproxCloseness(net, nSamples=1000, epsilon=0.1, normalized=False, type=2)
-
-    # community detection
-    # communities = community.detectCommunities(net)
-    # print(communities)
-    # community.writeCommunities(communities, "output/" + dataname + ".partition")
-
-    # 邻接矩阵与Laplacian矩阵. 时间复杂度太高
-    # print(networkit.algebraic.adjacencyEigenvectors(net, cutoff=2, reverse=False))
-    # eig_eigv = get_spectral_norm(net)
-    # eig_eigv = get_algebraic_connectivity(net)
-    # print(eig_eigv)
-    # print( networkit.algebraic.laplacianEigenvectors(net, cutoff=3, reverse=False))
-    # sparse_adj_matrix = networkit.algebraic.adjacencyMatrix(net, matrixType='sparse')
-    # spectral_norm =  networkit.algebraic.eigenvectors(sparse_adj_matrix, cutoff=-1, reverse=False)
-    # print(len(sparse_adj_matrix))
+    logging.info('assorsativity done\n')
 
 
 def analysis_directed(net, label, outpath):
@@ -193,19 +176,19 @@ def analysis_directed(net, label, outpath):
     logging.info('start to plot complementary cumulative (in/out) degree distribution...')
     networkit_plot.plot_ccum_degree_dist(net, label, outpath, degree_type='in')
     networkit_plot.plot_ccum_degree_dist(net, label, outpath, degree_type='out')
-    logging.info('\n')
+    logging.info('plot cc (in/out) degree distribution done.\n')
 
     # 出度/入度联合分布
     logging.info('plot outdegree vs indegree...')
     networkit_plot.plot_out_in_degree_comparision(net, label, outpath)
-    logging.info('\n')
+    logging.info('plot out vs in done.\n')
 
     # 相互性
     # reciprocity
     logging.info('calculating reciprocity...')
     reciprocity = networkit_util.get_reciprocity(net)
     logging.info('reciprocity: {0}'.format(reciprocity))
-    logging.info('\n')
+    logging.info('reciprocity done.\n')
 
     # 连通分支
     # weakly connected components
@@ -224,7 +207,7 @@ def analysis_directed(net, label, outpath):
     lscc = networkit_util.get_lscc_subgraph(net)
     logging.info('lcc nodes percentage: {0}'.format(lscc.numberOfNodes() / net.numberOfNodes()))
     logging.info('lcc edges percentage: {0}'.format(lscc.numberOfEdges() / net.numberOfEdges()))
-    logging.info('\n')
+    logging.info('components done.\n')
 
     # Pagerank
     logging.info('calculating pagerank...')
@@ -234,7 +217,7 @@ def analysis_directed(net, label, outpath):
     paras = {'centrality_filename': centrality_filename, 'label': label, 'outpath': outpath,
              'centrality_name': centrality_name}
     networkit_plot.plot_ccum_centrality_dist(**paras)
-    logging.info('\n')
+    logging.info('pagerank done.\n')
 
 
 def analysis(filepath, label, outpath, directed=False):
@@ -281,73 +264,3 @@ def analysis(filepath, label, outpath, directed=False):
         paras = {'net': net, 'label': label, 'outpath': outpath}
         analysis_directed(**paras)
         logging.info('done ^-^')
-
-
-def main():
-    """
-    function entrance
-    
-    :return: None 
-    
-    """
-    # parameters
-    filepath = "/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/" \
-               "DBpedia/all/ontology_instance_object_literal_id_pair"
-    label = "ontology_instance_object_literal_id_pair"
-    outpath = './output/' + label + '/'
-
-    # check whether the output directory exists
-    if not os.path.exists(outpath):
-        os.mkdir(outpath)
-
-    # set logging
-    # I guess there exists conflict. So add code below.
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
-    log_filepath = outpath + label + '.log'
-    logging.basicConfig(filename=log_filepath, format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
-
-    logging.info('read graph from file')
-    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=False)
-    net = net_reader.read(filepath)
-    logging.info('get undirected map node id...')
-    networkit_util.write_map_node_id(net_reader, label, outpath + 'undirected-')
-    logging.info('******************************************')
-    paras = {'net': net, 'label': label, 'outpath': outpath}
-    analysis_undirected(**paras)
-    logging.info('******************************************')
-
-    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=True)
-    net = net_reader.read(filepath)
-    logging.info('get directed map node id...')
-    networkit_util.write_map_node_id(net_reader, label, outpath + 'directed-')
-    paras = {'net': net, 'label': label, 'outpath': outpath}
-    analysis_directed(**paras)
-    logging.info('done ^-^')
-
-
-if __name__ == '__main__':
-    # main()
-    # print('hello')
-    # parameters
-    filepath = '/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/NELL/nell-all-id-pair'
-    label = "nell-all-id-pair"
-    outpath = './output/' + label + '/'
-
-    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=False)
-    net = net_reader.read(filepath)
-    networkit_plot.plot_cum_clustering_dist(net, label, outpath)
-
-    lcc_subgraph = networkit_util.get_lcc_subgraph(net)
-    networkit_plot.plot_hop_dist(lcc_subgraph, label, outpath)
-
-    centrality_style = ['eigenvector-centrality', 'pagerank']
-    eigenvector_filename = outpath + label + '-' + 'eigen_vector_centr'
-    networkit_plot.plot_ccum_centrality_dist(eigenvector_filename, label, outpath, centrality_style[0])
-    pagerank_filename = outpath + label + '-' + 'pagerank'
-    networkit_plot.plot_ccum_centrality_dist(pagerank_filename, label, outpath, centrality_style[1])
-
-    net_reader = networkit.graphio.EdgeListReader(separator='\t', firstNode=1, continuous=False, directed=True)
-    net = net_reader.read(filepath)
-    networkit_plot.plot_wcc_dist(net, label, outpath)
-    networkit_plot.plot_scc_dist(net, label, outpath)

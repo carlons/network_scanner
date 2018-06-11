@@ -96,7 +96,7 @@ def raw_to_id_pair(filename, index_filename, id_pair_filename, cols='two'):
     col_to_map = {'two': [0, 1], 'three': [0, 2]}
     file = open(filename, 'r')
     index_file = open(index_filename, 'r')
-    id_pair_file = open(id_pair_filename, 'w')
+    id_pair_file = open(id_pair_filename, 'a')
     # get string id map
     string_id_map = dict()
     while True:
