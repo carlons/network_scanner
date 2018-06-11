@@ -147,7 +147,7 @@ def plot_out_in_degree_comparision(net, label, outpath):
     plt.savefig(outpath + label + '-outdegree-indegree-comparision.eps')
 
 
-def plot_cum_clustering_dist(net, label, outpath):
+def plot_cum_clustering_dist(net, label, outpath, turbo):
     """
     cumulative distribution of clustering coefficient of nodes.
     
@@ -158,12 +158,20 @@ def plot_cum_clustering_dist(net, label, outpath):
     :param label: network label
     
     :param outpath: figure output directory
+
+    :param turbo: There are two algorithms available. The trivial (parallel) algorithm needs only a small amount of additional memory.
+                The turbo mode adds a (sequential, but fast) pre-processing step using ideas from [0].
+                This reduces the running time significantly for most graphs. However, the turbo mode needs O(m) additional memory.
+                 In practice this should be a bit less than half of the memory that is needed for the graph itself.
+                 The turbo mode is particularly effective for graphs with nodes of very high degree and a very skewed degree distribution.
+
+                    [0] Triangle Listing Algorithms: Back from the Diversion Mark Ortmann and Ulrik Brandes 2014 Proceedings of the Sixteenth Workshop on Algorithm Engineering and Experiments (ALENEX). 2014, 1-8
     
     :return: None
     
     """
     net.removeSelfLoops()
-    local_cc = networkit.centrality.LocalClusteringCoefficient(net, turbo=False)
+    local_cc = networkit.centrality.LocalClusteringCoefficient(net, turbo)
     local_cc.run()
     unique_cc, unique_cc_cnt = np.unique(local_cc.scores(), return_counts=True)
     unique_cc_cumcnt = np.cumsum(unique_cc_cnt)/sum(unique_cc_cnt)
@@ -402,41 +410,3 @@ def plot_hop_dist(net, label, outpath):
     ax.set_ylabel('p(x<=d)')
     # ax.legend(loc='best')
     plt.savefig(outpath + label + '-hop.eps')
-
-
-if __name__ == '__main__':
-    # filepath = "../input/cit-HepTh"
-    # label = "cit-Hepth"
-    # outpath = './output/' + label + '/'
-    # net = graphio.readGraph(filepath, Format.EdgeList, separator=' ', firstNode=0, continuous=False, directed=True)
-    # paras = {'net': net, 'label': label, 'outpath': outpath}
-    # plot_degree_dist(**paras)
-    # plot_indeg_dist(**paras)
-    # plot_outdeg_dist(**paras)
-
-    # degree_type = 'out'
-    # paras = {'net': net, 'label': label, 'outpath': outpath, 'degree_type': degree_type}
-    # plot_ccum_degree_dist(**paras)
-
-    # plot_out_in_degree_comparision(**paras)
-    # net = graphio.readGraph(filepath, Format.EdgeList, separator=' ', firstNode=0, continuous=False, directed=False)
-    # paras = {'net': net, 'label': label, 'outpath': outpath}
-    # plot_cum_clustering_dist(**paras)
-
-    # degree_type = 'all'
-    # paras = {'net': net.toUndirected(), 'label': label, 'outpath': outpath, 'degree_type': degree_type}
-    # plot_assorsativity(**paras)
-
-    # plot_wcc_dist(**paras)
-    # plot_scc_dist(**paras)
-
-    # plot_betweeness(**paras)
-    # plot_eigenvector_centrality(**paras)
-    # plot_pagerank(**paras)
-
-    filepath = "/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/NELL/nell-all-id-pair"
-    net = graphio.readGraph(filepath, Format.EdgeList, separator='\t', firstNode=0, continuous=False, directed=False)
-    subgraph = networkit_util.get_lcc_subgraph(net)
-    label = 'test-hopplot'
-    outpath = './output/'
-    plot_hop_dist(subgraph, label, outpath)

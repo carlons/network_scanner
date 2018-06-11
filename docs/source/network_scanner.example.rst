@@ -20,6 +20,14 @@ network\_scanner.example.dbpedia\_data\_analysis module
     :undoc-members:
     :show-inheritance:
 
+network\_scanner.example.example module
+---------------------------------------
+
+.. automodule:: network_scanner.example.example
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 network\_scanner.example.nell\_analysis module
 ----------------------------------------------
 

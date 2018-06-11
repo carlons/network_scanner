@@ -294,18 +294,3 @@ def get_top_in_out_degree_cmp(indeg_falseid_value_filename, outdeg_falseid_value
         result_file.write(str(ele))
         result_file.write('\n')
     result_file.close()
-
-
-if __name__ == '__main__':
-    filename = ''
-    label = ''
-    outpath = ''
-    # set logging
-    # I guess there exists conflict. So add code below.
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
-    log_filepath = outpath + label + '-power-law.log'
-    logging.basicConfig(filename=log_filepath, format='%(asctime)s - %(levelname)s - %(''message)s', level=logging.INFO)
-
-
-

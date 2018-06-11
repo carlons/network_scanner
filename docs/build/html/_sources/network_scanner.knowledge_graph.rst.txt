@@ -36,6 +36,22 @@ network\_scanner.knowledge\_graph.probase\_preprocess module
     :undoc-members:
     :show-inheritance:
 
+network\_scanner.knowledge\_graph.wikidata\_preprocess module
+-------------------------------------------------------------
+
+.. automodule:: network_scanner.knowledge_graph.wikidata_preprocess
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+network\_scanner.knowledge\_graph.xlore\_preprocess module
+----------------------------------------------------------
+
+.. automodule:: network_scanner.knowledge_graph.xlore_preprocess
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 network\_scanner.knowledge\_graph.yago\_preprocess module
 ---------------------------------------------------------
 

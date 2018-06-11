@@ -19,10 +19,12 @@ network_scanner/knowledge_graph/dbpedia_preprocess.py
 network_scanner/knowledge_graph/kg_util.py
 network_scanner/knowledge_graph/nell_preprocess.py
 network_scanner/knowledge_graph/probase_preprocess.py
+network_scanner/knowledge_graph/wikidata_preprocess.py
 network_scanner/knowledge_graph/xlore_preprocess.py
 network_scanner/knowledge_graph/yago_preprocess.py
 network_scanner/networkit_based/__init__.py
 network_scanner/networkit_based/calculate_betweeness.py
+network_scanner/networkit_based/calculate_clustering_coefficient.py
 network_scanner/networkit_based/centrality_analysis.py
 network_scanner/networkit_based/degree_analysis.py
 network_scanner/networkit_based/distance_analysis.py

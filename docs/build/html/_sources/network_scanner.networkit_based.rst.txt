@@ -12,6 +12,14 @@ network\_scanner.networkit\_based.calculate\_betweeness module
     :undoc-members:
     :show-inheritance:
 
+network\_scanner.networkit\_based.calculate\_clustering\_coefficient module
+---------------------------------------------------------------------------
+
+.. automodule:: network_scanner.networkit_based.calculate_clustering_coefficient
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 network\_scanner.networkit\_based.centrality\_analysis module
 -------------------------------------------------------------
 

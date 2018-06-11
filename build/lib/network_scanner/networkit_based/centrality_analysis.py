@@ -166,18 +166,3 @@ def power_law_analysis(centrality_filename, centrality_name, label, outpath):
 
     figname = outpath + label + '-powerlaw'
     plt.savefig(figname + '.eps', bbox_inches='tight')
-
-
-if __name__ == '__main__':
-    # base_centrality_path = '/home/carlons/workspace_python/network_data_analysis/snap_based/output/'
-    base_centrality_path = './output/'
-    centrality_filename = base_centrality_path + 'probase-id-pair/probase-id-pair-pagerank-top100'
-    # base_index_path = '/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/'
-    # index_filename = base_index_path + 'Probase/probase-index'
-    map_filename = './output/probase-id-pair/probase-id-pair-map-node-ids'
-    k = 10
-    top_k_id = get_top_k_id(centrality_filename, map_filename, k)
-    print(top_k_id)
-    # top_k_name = get_top_k_name(top_k_id, index_filename)
-    # for name in top_k_name:
-    #     print(name, ' \\\\')

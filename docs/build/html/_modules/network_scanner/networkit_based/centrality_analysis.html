@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>network_scanner.networkit_based.centrality_analysis &#8212; network_scanner 0.1.0 documentation</title>
+    <title>network_scanner.networkit_based.centrality_analysis &#8212; network_scanner 0.1.2 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
@@ -199,21 +199,6 @@
 
     <span class="n">figname</span> <span class="o">=</span> <span class="n">outpath</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s1">&#39;-powerlaw&#39;</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figname</span> <span class="o">+</span> <span class="s1">&#39;.eps&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span></div>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="c1"># base_centrality_path = &#39;/home/carlons/workspace_python/network_data_analysis/snap_based/output/&#39;</span>
-    <span class="n">base_centrality_path</span> <span class="o">=</span> <span class="s1">&#39;./output/&#39;</span>
-    <span class="n">centrality_filename</span> <span class="o">=</span> <span class="n">base_centrality_path</span> <span class="o">+</span> <span class="s1">&#39;probase-id-pair/probase-id-pair-pagerank-top100&#39;</span>
-    <span class="c1"># base_index_path = &#39;/home/carlons/workspace_python/network_data_analysis/knowledge_graph/output/&#39;</span>
-    <span class="c1"># index_filename = base_index_path + &#39;Probase/probase-index&#39;</span>
-    <span class="n">map_filename</span> <span class="o">=</span> <span class="s1">&#39;./output/probase-id-pair/probase-id-pair-map-node-ids&#39;</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">top_k_id</span> <span class="o">=</span> <span class="n">get_top_k_id</span><span class="p">(</span><span class="n">centrality_filename</span><span class="p">,</span> <span class="n">map_filename</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">top_k_id</span><span class="p">)</span>
-    <span class="c1"># top_k_name = get_top_k_name(top_k_id, index_filename)</span>
-    <span class="c1"># for name in top_k_name:</span>
-    <span class="c1">#     print(name, &#39; \\\\&#39;)</span>
 </pre></div>
 
           </div>

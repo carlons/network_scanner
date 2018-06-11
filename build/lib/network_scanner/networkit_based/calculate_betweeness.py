@@ -85,7 +85,7 @@ def main():
     paras = {'net': net, 'label': label, 'outpath': outpath}
     networkit_util.write_map_node_id(net_reader, label, outpath)
     logging.info('write map node id to file...')
-    betweeness(**paras)
+    get_betweeness(**paras)
     logging.info('******************************************')
     logging.info('done ^-^')
 

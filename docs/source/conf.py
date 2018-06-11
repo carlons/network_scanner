@@ -14,8 +14,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../../network_scanner/'))
-sys.path.insert(0, os.path.abspath('../../../network_scanner/network_scanner/'))
+sys.path.insert(0, os.path.abspath('../../../network_scanner'))
+sys.path.insert(0, os.path.abspath('../../network_scanner'))
 
 
 # -- Project information -----------------------------------------------------
@@ -27,7 +27,7 @@ author = 'Xikun Huang'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.1.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -46,6 +46,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
+    'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
 ]
