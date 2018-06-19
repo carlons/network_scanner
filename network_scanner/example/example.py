@@ -51,14 +51,17 @@ if __name__ == '__main__':
     calculate_betweeness.get_betweeness(net, label, outpath)
 
     # 6. centrality analysis
-    # pagerank_filename = outpath + 'toy-pagerank-falseid-value'
-    # map_filename = outpath + 'directed-toy-map-node-ids'
-    # top_k_list = centrality_analysis.get_top_k_id(pagerank_filename, map_filename, 3)
-    # print(top_k_list)
+    # pagerank_filename = outpath + label + '-pagerank-falseid-value'
+    # map_filename = outpath + 'directed-' + label + '-map-node-ids'
     # index_filename = './input/index'
+    # top_k_filename = outpath + label + '-pagerank-top-name'
+    # k = 100
+    # top_k_list = centrality_analysis.get_top_k_id(pagerank_filename, map_filename, 100)
     # top_k_name = centrality_analysis.get_top_k_name(top_k_list, index_filename)
-    # print(top_k_name)
-    # centrality_analysis.power_law_analysis(pagerank_filename, 'pagerank', label, outpath)
+    # top_k_file = open(top_k_filename, 'w')
+    # for item in top_k_name:
+    #     top_k_file.write(str(item) + '\n')
+    # top_k_file.close()
 
     # 2. degree analysis
     # false_id_value_filename = outpath + 'toy-falseid-degree'
